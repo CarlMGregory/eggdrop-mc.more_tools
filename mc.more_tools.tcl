@@ -1,7 +1,10 @@
 ##
-# More Tools v2.0.1 by MC_8 - Carl M. Gregory <mc8@purehype.net>
+# More Tools v2.0.2
+#  by MC_8 - Carl M. Gregory <mc8@purehype.net>
 #
 # My SVS Website - http://mc.purehype.net:81/
+# Have a bug?  http://mc.purehype.net:81/bugzilla/
+# TCL Mailing list - http://mc.purehype.net:81/maillist/
 ##
 
 ##
@@ -12,6 +15,19 @@
 ##
 # History
 ##
+# v2.0.2 (03.17.02)
+#  MC_8 - Fixed error in masktype proc; if type is 10-19 and
+#         the host is an ip and it has a 255 in any of the 4
+#         atoms- it would be treated as a host rather than an
+#         ip.  v1.0 -> v1.1
+#  MC_8 - Fixed listing error in ctcp proc. v1.0 -> v1.1
+#  MC_8 - Recoded the action fix filter procs.
+#  MC_8 - Upgraded chanflag proc to v2.0, faster.
+#  MC_8 - Upgraded chanint proc to v2.0, faster.
+#  MC_8 - Fixed 'couldn't compile regular expression pattern'
+#         problem with replace proc.
+#  MC_8 - Fixed set x bug in color proc.
+#
 # v2.0.1 (11.11.01)
 #  MC_8 - Fixed 'missing close-brace' startup crash error for the
 #         findnick proc.
@@ -82,7 +98,7 @@
 #         bussy fixing all them bugs :-)       
 #         action.fix.tcl is no longer          
 #         nessassary to load, it is loaded     
-#         within this script.                  
+#         within this script. 
 #                                             
 # v1.1.7 (10-30-99)                           
 #  MC_8 - VaultX - Eggdrop1.3.29+RC2 for some  
@@ -143,7 +159,7 @@
 # Scripters, to test if this script is loaded
 # variable $moretools will be set to moretools
 # current version number.
-# <major version><minor version><bug fix level> ((010000) <=- version 1.0.0)
+# <major version><minor version><bug fix level> ((010000) <- version 1.0.0)
 
 #
 # action <nick/#channel> <text>
@@ -172,7 +188,7 @@
 #
 # chanint <channel> <int>
 #     This is like chanflag, but gives the value of an
-#     integer channel set insted of a flag channel set.
+#     integer channel set instead of a flag channel set.
 #     returns:  integer's value setting
 #              -1 if invalid integer setting
 
@@ -250,16 +266,16 @@
 #      2 - *!*@host.domain
 #      3 - *!*user@*.domain
 #      4 - *!*@*.domain
-#      5 - nick!user@host.domain (utterly useless, just returns <hostmask>)
+#      5 - nick!user@host.domain
 #      6 - nick!*user@host.domain
 #      7 - nick!*@host.domain
 #      8 - nick!*user@*.domain
 #      9 - nick!*@*.domain
-#     You can also specify a type of 10 to 19 which correspond to masks 0 
-#     to 9.  But if the host.domain is a;
-#       hostname = Instead of using a * wildcard to replace portions of the
-#                  host.domain, it replaces the numbers in the host.domain 
-#                  with a '?' (question mark) wildcard
+#     You can also specify a type of 10 to 19 which correspond to masks 
+#     0 to 9.  But if the host.domain is a;
+#       hostname = Instead of using a * wildcard to replace portions of 
+#                  the host.domain, it replaces the numbers in the 
+#                  host.domain with a '?' (question mark) wildcard
 #       ip       = It will mask as normal, with no '?' (question mark)
 #                  replacments as does hostname.
 #     returns: mask'd host
@@ -275,7 +291,7 @@
 #     returns: nothing
 
 #
-# replace <text> <substring newstring ...>
+# replace <text> <substring newstring [substring newstring ...]>
 #     Replaces any occurrence of substring in <text> with newstring.
 #       example: replace abcdefg "cd xyz"  => abxyzefg
 #     You can also specify multiple replace parameters.
@@ -283,19 +299,9 @@
 #       example: replace abcdefg "d { the middle }"  => abc the middle efg
 #
 #     NOTE:
-#       If the substring or the newstring has a ' ' (space) in it, you must
-#       enclose it in {} (brackets), even if it's a veriable.
-#       example: 
-#         .tcl set list "word1 word2" ; replace "word0 %list" "%list $list"
-#         Tcl: word0 word1
-#
-#         .tcl set list "word1 word2" ; replace "word0 %list" "%list {$list}"
-#         Tcl: word0 word1 word2
+#       substring and newstring goes in list format.
 #
 #       Replacement works from left to right.
-#
-#       substring (not newstring) uses regular expression matching. See
-#       http://tcl.activestate.com/man/tcl8.3/TclCmd/re_syntax.htm
 #
 #      returns: <text> after all substrings were replaced with newstrings
 
@@ -352,67 +358,54 @@
 
 
 #### Procedure coding
-set moretools_version v2.0.1
-set moretools "020001"
-
-#
-proc action {to text} {puthelp "PRIVMSG $to :\001ACTION $text\001"}
-
-#
-proc biggest {numbers} {return [lindex [lsort -integer $numbers] end]}
-
-#
-proc bold {{arg {}}} {if {$arg != ""} {append arg \002};return \002$arg}
+set moretools_version v2.0.2
+set moretools "020002"
 
 # v1.0
+proc action {to text} {puthelp "PRIVMSG $to :\001ACTION $text\001"}
+
+# v1.0
+proc biggest {numbers} {return [lindex [lsort -integer $numbers] end]}
+
+# v1.0
+proc bold {{arg ""}} {if {$arg != ""} {append arg \002};return \002$arg}
+
+# v2.0
 proc chanflag {channel flag} {
- if {![validchan $channel]} {return -code error "no such channel record"}
- set list [channel info $channel]
- for {set i 0} {![regexp -- {^[0-9]*:[0-9]*$} [lindex $list $i]]} {incr i} {}
- for {} {[regexp -- {^[0-9]*:[0-9]*$} [lindex $list $i]]} {incr i} {}
- set list [lrange $list $i end]
- foreach info [string tolower $list] {
-  if {[string range $info 1 end] != [string tolower $flag]} {continue}
-  if {[string index $info 0] == "-"} {
-   return 0
-  } elseif {[string index $info 0] == "+"} {return 1} else {return 2}
- };return -1
+ if {[lsearch -exact [string tolower [channel info $channel]] +[string tolower $flag]] == "-1"} {return 0}
+ return 1
 }
 
-#
+# v2.0
 proc chanint {channel int} {
- if {![validchan $channel]} {return -code error "no such channel record"}
- set list [channel info $channel]
- for {set i 0} {![regexp -- {^[0-9]*:[0-9]*$} [lindex $list $i]]} {incr i} {}
- for {} {[regexp -- {^[0-9]*:[0-9]*$} [lindex $list $i]]} {incr i} {}
- set list [lrange $list $i end]
- foreach info [string tolower $list] {
-  if {[lindex $info 0] == [string tolower $int]} {return [lindex $info 1]}
- };return -1
+ set cache(chaninfo) [string tolower [channel info $channel]]
+ regsub -all -- {([\\\{\}\[\]\"])} [string tolower $int] {\\\1} int
+ if {[set temp(i) [lsearch -glob $cache(chaninfo) "$int *"]] == "-1"} {return -1}
+ return [lindex [split [lindex $cache(chaninfo) $temp(i)] " "] 1]
 }
 
-#
+# v1.1
 proc color {{num {}} {text {}}} {
  if {$text == ""} {set x $num} else {
   if {$num == ""} {
    return -code error "wrong # args: should be \"color [forground[,background] [text]]\""
   } elseif {![regexp {^([0-9][0-9]?(,[0-9][0-9]?)?)?$} $num]} {
    return -code error "couldn't formulate colored string: invalid color number format, should be ff\[,bb\]"
-  }; set x $test $num$text\003
+  }; set x $num$text\003
  }; return \003$x
 }
 
-#
+# v1.1
 proc ctcp {to arg} {
- set arg "[string toupper [lindex $arg 0]] [lrange $arg 1 end]"
+ set arg "[string toupper [lindex [split $arg] 0]] [join [lrange [split $arg] 1 end]]"
  if {([lindex $arg 0] == "PING") && ([lindex $arg 1] == "")} {set arg "PING [clock seconds]"}
  puthelp "PRIVMSG $to :\001$arg\001"
 }
 
-#
+# v2.0
 proc filt {text} {regsub -all -- {([\\\{\}\[\]\"])} $text {\\\1} text; return $text}
 
-#
+# v1.0
 proc findip {arg} {
  set ips ""
  while {[regexp -- {([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)} $arg temp a b c d]} {
@@ -421,7 +414,7 @@ proc findip {arg} {
  }; return $ips
 }
 
-#
+# v1.0
 proc findhand {hostmask} {
  set list ""
  foreach user [whom *] {
@@ -446,54 +439,52 @@ proc findnick {hostmask {channel ""}} {
  }; return $buffer
 }
 
-# Older bots don't support getchanhost without a channel.
-# This is a simple fix.
+# Pre 1.4.2 bots do not support getchanhost with as channel optional.
+# This is a simple fix to make channel optional.
 if {[catch {getchanhost -test}]} {
- if {[info commands mc:fix:v1:getchanhost] == ""} {
-  rename getchanhost mc:fix:v1:getchanhost
- }
- proc getchanhost {nick {channel {}}} {
+ if {[info commands mc:fix:v1:getchanhost] == ""} {rename getchanhost mc:fix:v1:getchanhost}
+ proc getchanhost {nick {channel ""}} {
   if {![validchan $channel]} {
-   if {$channel != ""} {return -code error "no such channel record"} else {
-    set channel [channels]
-   }
+   if {$channel != ""} {return -code error "no such channel record"} \
+   else {set channel [channels]}
   }
   foreach chan $channel {if {[onchan $nick $chan]} {return [mc:fix:v1:getchanhost $nick $chan]}}
   return ""
- }
+ }; putlog "More Tools:  Old TCL command 'getchanhost' found, fixing."
 }
 
-#
-proc gethost {nick {channel {}}} {
+# v1.0
+proc gethost {nick {channel ""}} {
  if {![catch {set return [getchanhost $nick]}]} {return $return}
  if {![validchan $channel]} {
-  if {$channel != ""} {return -code error "no such channel record"} else {
-   set channel [channels]
-  }
+  if {$channel != ""} {return -code error "no such channel record"} \
+  else {set channel [channels]}
  }
  foreach chan $channel {if {[onchan $nick $chan]} {return [getchanhost $nick $chan]}}
  return ""
 }
 
-#
+# Pre 1.4.2 bots do not support the islinked tcl command.  This will add it
+# if not avilable.
 if {[catch {islinked -test}]} {
  proc islinked {bot} {
   if {[lsearch -exact [string tolower [bots]] [string tolower $bot]] == "-1"} {return 0}
   return 1
- }
+ }; putlog "More Tools:  TCL command 'islinked' not found, fixing."
 }
 
-#
+# v1.0
 proc lowest {numbers} {return [lindex [lsort -integer $numbers] 0]}
 
-# v1.0
-proc masktype {hostmask type} {
+# v1.1
+proc masktype {nuhost type} {
  set ident_max-length 9
  set host_max-length 63
- scan $hostmask {%[^!]!%[^@]@%s} nick ident host
+ scan $nuhost {%[^!]!%[^@]@%s} nick ident host
  set maskhost 1
  if {[regexp -- {^1[0-9]$} $type]} {
-  if {!([regexp -- {^([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)$} $host temp a b c d] && ($a > 0 && $a < 255 && $b < 255 && $c < 255 && $d < 255))} {
+  if {!(([regexp -- {^([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)$} $host temp a b c d]) &&
+       ($a > 0 && $a <= 255 && $b <= 255 && $c <= 255 && $d <= 255))} {
    regsub -all {[0-9]} $host "?" host
    set maskhost 0
   };set type [string index $type 1]
@@ -510,79 +501,79 @@ proc masktype {hostmask type} {
  }; return [format "%s!%s@%s" $nick $ident $host]
 }
 
-#
+# v1.0
 proc msg {to text} {puthelp "PRIVMSG $to :$text"}
 
-#
+# v1.0
 proc notice {to text} {puthelp "NOTICE $to :$text"}
 
-# v1.0
+# v1.1
 proc replace {text subs} {
  if {![catch {string map -nocase $subs $text} output]} {return $output}
  for {set i 0} {[lindex $subs $i] != ""} {incr i 2} {
-  regsub -all -- [lindex $subs $i] $text [lindex $subs [expr $i+1]] text
+  regsub -all -- {([\\\*\+\?\{\}\,\(\)\:\[\]\.\^\$\=\!\|])} [lindex $subs $i] {\\\1} temp(temp)
+  regsub -all -- $temp(temp) $text [lindex $subs [expr $i+1]] text
  }; return $text
 }
 
-#
+# v1.0
 proc reverse {{arg {}}} {if {$arg != ""} {append arg \026};return \026$arg}
 
-#
+# v1.0
 proc str {text times} {
  if {![catch {string repeat $text $times} output]} {return $output}
  for {set i 1; set return ""} {($i <= $times) && ($times > 0)} {incr i} {append return $text}
  return $return
 }
 
-#
+# v1.0
 proc strip:all {text} {
- regsub -all -- {\002} $text "" text
- regsub -all -- {\003([0-9][0-9]?(,[0-9][0-9]?)?)?} $text "" text
- regsub -all -- {\026} $text "" text
- regsub -all -- {\037} $text "" text
+ regsub -all -- {\002} $text "" text ;#bold
+ regsub -all -- {\003([0-9][0-9]?(,[0-9][0-9]?)?)?} $text "" text ;#color
+ regsub -all -- {\026} $text "" text ;#reverse
+ regsub -all -- {\037} $text "" text ;#underline
  return $text
 }
 
-#
+# v1.0
 proc strip:bold {text} {regsub -all -- {\002} $text "" text; return $text}
 
-#
+# v1.0
 proc strip:color {text} {
  regsub -all -- {\003([0-9][0-9]?(,[0-9][0-9]?)?)?} $text "" text
  return $text
 }
 
-#
+# v1.0
 proc strip:reverse {text} {regsub -all -- {\026} $text "" text; return $text}
 
-#
+# v1.0
 proc strip:uline {text} {regsub -all -- {\037} $text "" text; return $text}
 
-#
+# v1.0
 proc uline {{arg {}}} {if {$arg != ""} {append arg \037};return \037$arg}
 
-#
+# v1.0
 proc which {exec} {
- if {![catch {exec which $exec} output]}  {return $output}
+ if {![catch {exec which $exec} output]} {return $output}
  global env
- if {[info exists env(OS)] && [string match *windows* [string tolower $env(OS)]]} {
-  set temp ";"
- } else {set temp ":"}
- foreach path [split $env(PATH) $temp] {
-  if {[file executable "$path/$exec"]} {return "$path/$exec"}
- }; return ""
+ if {[info exists env(OS)] && [string match *windows* [string tolower $env(OS)]]} {set temp ";"} else {set temp ":"}
+ foreach path [split $env(PATH) $temp] {if {[file executable "$path/$exec"]} {return "$path/$exec"}}; return ""
 }
 
-bind filt - "\001ACTION *\001" filt_act
-proc filt_act {idx text} {
- scan $text "%s %\[^\001\]\001" temp text
- return ".me $text"
-}
-bind filt - "/me *" filt_telnet_act
-bind filt - "/action *" filt_telnet_act
-proc filt_telnet_act {idx text} {
- scan $text "%s %\[^\0\]\0" temp text
- return ".me $text"
+# Yea yea, if {1}, no real meaning... just trying to keep it grouped together for easy reading.
+# This does the action fixes for dcc chat and telnet partyline communications.
+if {1} {
+ bind filt - "\001ACTION *\001" filt_act
+ proc filt_act {idx text} {
+  set temp [join [lrange [split $text] 1 end]]
+  regexp -- "^(.*)\001?\$" $temp dummy temp
+  return ".me $temp"
+ }
+ bind filt - "/me *" filt_telnet_act
+ bind filt - "/action *" filt_telnet_act
+ proc filt_telnet_act {idx text} {return ".me [join [lrange [split $text " "] 1 end] " "]"}
+ putlog "More Tools:  Partyline action-fix applied."
 }
 
 putlog "More Tools $moretools_version by MC_8 loaded."
