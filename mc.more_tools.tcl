@@ -1,5 +1,5 @@
 ##
-# More Tools v3.0
+# More Tools v3.0.1
 #  by MC_8 - Carl M. Gregory <mc8@purehype.net>
 #
 # My Website - http://mc.purehype.net:81/
@@ -7,10 +7,10 @@
 ##
 
 ##
-# This is not a "cool" script, it's a tools script for other scriptures to use and/
+# This is not a "cool" script, it's a tools script for other scripters to use and/
 # or learn with.  If you are reading this because another script told you that you
 # have to load this script so that it can work properly, then do so -- there is
-# nothing to configure/setup here.
+# nothing to configure/ setup here.
 ##
 
 ##
@@ -22,25 +22,25 @@
 ##
 # Variable 'mc_moretools(numversion)' == <major><minor><bug>
 #
-# 1) Each subset consists of 3 intagers, zerofill.
+# 1) Each subset consists of 3 integers, zerofill.
 #    Example;
 #      4.1.1 is wrong, should be 004001001
-# 2) A complete `numversion` consists of 9 intagers total.
+# 2) A complete `numversion` consists of 9 integers total.
 # ----------
 # Variable 'mc_moretools(version)' == v<major>.<minor>[.<bug>]
 #
 # 1) 'version''s regular expression:
 #     v([1-9][0-9]{0,2})\.([1-9][0-9]{0,2}|0)(\.([1-9][0-9]{0,2}))?$ -> maj min - bug
-# 2) If bug version is 0 (000 in `numbersion`), it is dropped.
+# 2) If bug version is 0 (000 in `numversion`), it is dropped.
 #    Examples;
 #      v4.1.0 is wrong, should be v4.1 .
 #      v1.2.00 is wrong, should be v1.2 .
 # 3) Unlike numversion, subsets are not zerofill.
 #    Example;
 #      v0004.01.100 is wrong, should be v4.1.1 .
-# 4) A complete `version` consists of no more than 12 characters (3 intagers maximum
-#    per subset) and no less than 4 characters (1 intager maximum per subset, with
-#    the beta subset and it's prepending period dropable if beta equals zero).
+# 4) A complete `version` consists of no more than 12 characters (3 integers maximum
+#    per subset) and no less than 4 characters (1 integer maximum per subset, with
+#    the beta subset and it's pre pending period drop able if beta equals zero).
 # ----------
 # Individual command versions == v<major>.<minor>
 #
@@ -60,8 +60,8 @@
 # 2) Bug changes when something is modified that has no effect on a proc's arguments
 #    nor returns.
 #    Examples include;
-#      - The recode of a proc to be effecent, at the same time keeping the argument
-#        and return standards formerly proposed.
+#      - The re code of a proc to be more efficient, at the same time keeping the
+#        argument and return standards formerly proposed.
 #      - Documentation changes.
 # 3) Every other instance is a Minor level change; things that will not break a
 #    script but do not apply as a bug level change.
@@ -69,13 +69,13 @@
 #      - The addition of a new proc.
 ##
 catch {unset mc_moretools}
-array set mc_moretools [list   version    v3.0        \
-                               numversion 003000000   \
+array set mc_moretools [list   version    v3.0.1      \
+                               numversion 003000001   \
                                loaded     0           ]
 
 # mc_moretools(loaded) is set to zero here, near top, and near the bottom it get's
 # set to 1.  If your a scripture looking to base your script off the load of this
-# script, you can utalize that.
+# script, you can utilize that.
 # Example;
 #   if {[lindex [array get mc_moretools loaded]] != "1"} {
 #   	# mc.moretools isn't loaded.  Yes I did this as != "1" on purpose, it could
@@ -94,7 +94,7 @@ array set mc_moretools [list   version    v3.0        \
 #       Ensure <text> is in list format.  If <text> is already in list format then
 #       nothing is converted.  If <text> is in string format, will convert to list
 #       format.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #     example:
 #       2list {abc "def hi"jk} => abc {"def} hi\"jk
@@ -116,15 +116,15 @@ proc 2list {{args ""}} {
 #     information (mc.moretools command):
 #       Checks to ensure the llength of the <args> list never exceeds <max_llength>
 #       nor goes below <min_llength>.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #     example:
 #       badargs $args 1 2 "?arg1? arg2"
 #     credit:
-#       Eggdrop development team, they have a simular thing for there C code.
+#       Eggdrop development team, they have a similar thing for there C code.
 #     returns:
 #       - 0, llength of <args> falls within <min_llength> and <max_llength>.
 #       - 1, if badargs is executed at top-level stack.
-#       - Otherwise, an error with the supplied <argNames> as part of its messag;
+#       - Otherwise, an error with the supplied <argNames> as part of its message;
 #           wrong # args: should be "command_name <argNames>"
 #         The command_name is automatically found and doesn't need to be supplied.
 proc badargs {{args ""}} {
@@ -146,7 +146,7 @@ proc badargs {{args ""}} {
 	}
 
 	# Make sure $check_args is in list format, if not then make it so.
-	# Were not going to use 2list here, don't want to envoke a 'too many nested calls
+	# Were not going to use 2list here, don't want to evoke a 'too many nested calls
 	# to Tcl_EvalObj' error since '2list' uses on this proc.
 	if {[catch {llength $check_args} llength]} {
 		set check_args [split $check_args]
@@ -167,10 +167,10 @@ proc badargs {{args ""}} {
 #       Check to see if <flag> is enabled or disabled for <channel>.  The 'get'
 #       option for the 'channel' command, provided by eggdrop in version 1.6.11, does
 #       the same as this command.  Because of that, this command will try and query
-#       'channel' command first (is faster); if it recieves an error then it will
+#       'channel' command first (is faster); if it receives an error then it will
 #       proceed with my code.  <flag> includes custom setudef flags as well as the
 #       standard ones provided by eggdrop.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -200,12 +200,12 @@ proc chanflag {{args ""}} {
 #     version:
 #       v3.2
 #     information (mc.moretools command):
-#       Obtain the intager <flag> value for <channel>.  The 'get' option for the
+#       Obtain the integer <flag> value for <channel>.  The 'get' option for the
 #       'channel' command, provided by eggdrop in version 1.6.11, does the same as
 #       this command.  Because of that, this command will try and query 'channel'
-#       command first (is faster); if it recieves an error then it will proceed with
+#       command first (is faster); if it receives an error then it will proceed with
 #       my code.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The '2list' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
@@ -213,10 +213,10 @@ proc chanflag {{args ""}} {
 #       chanint #abc123 mc.limit_users => 0
 #     credit:
 #     returns:
-#       - Numberical value of <intager_flag> for <channel>.
-#       - -1 if invalid <intager_flag>.
+#       - Numberical value of <integer_flag> for <channel>.
+#       - -1 if invalid <integer_flag>.
 proc chanint {{args ""}} {
-	badargs $args 2 2 "channel intager_flag"
+	badargs $args 2 2 "channel integer_flag"
 	unlist $args channel flag
 
 	set flag [string tolower $flag]
@@ -247,10 +247,10 @@ proc chanint {{args ""}} {
 #     information (mc.moretools command):
 #       Decompress <clist>.  A compressed index consists of <start>-<stop>.  If
 #       <stop> is less than <stop>, it is removed from the list.  <start> and <stop>
-#       must be of the same type.  There are 3 types; intagers, small cassed letters,
-#       capital cassed letters.  If <start> and <stop> do not consist of the same
+#       must be of the same type.  There are 3 types; integers, small cased letters,
+#       capital cased letters.  If <start> and <stop> do not consist of the same
 #       type, then it's left alone.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The '2list' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
@@ -318,11 +318,11 @@ proc clist2list {{args ""}} {
 #       v1.3
 #     information (mc.moretools command):
 #       Send a CTCP <command> to <nick|channel>.  <command [text]> should be in
-#       string format, using a white space to seperate the <command> from [text] (as
-#       opposed to list formatting it).  If <command> is 'PING', case insensative,
+#       string format, using a white space to separate the <command> from [text] (as
+#       opposed to list formatting it).  If <command> is 'PING', case insensitive,
 #       and [text] isn't supplied; text will automatically be filled in to current
 #       unix time.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -350,7 +350,7 @@ proc ctcp {{args ""}} {
 #       v1.1
 #     information (mc.moretools command):
 #       Sends a DCC Chat invitation to <nick>.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'ctcp' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
@@ -379,7 +379,7 @@ proc dccchat {{args ""}} {
 #     information (mc.moretools command):
 #       Turn <number> into a standard comma formatted string.  If <number> is an
 #       invalid real number, it is returned unformatted.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -408,16 +408,16 @@ proc commify {{args ""}} {
 #       v3.0
 #     information (mc.moretools command):
 #       This filters special characters within <text>.  In other words, adds a \
-#       infront of each \, {, }, [, ], and ".  This should be used for doing strange
+#       in front of each \, {, }, [, ], and ".  This should be used for doing strange
 #       things as string glob searching through a list (faster than winding through
 #       the list), otherwise proper list<>string formatting is urged.
 #       Valid switches:
-#         -regexp  - Filter <text> in prepreation for <text> to be used in a regular
+#         -regexp  - Filter <text> in preparation for <text> to be used in a regular
 #                    expression.
 #         -tcl     - Filter special TCL characters in <text>.
 #         --       - Marks the end of switches.
 #       If no switch is specified, -tcl is assumed.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #     examples:
 #       filter -tcl {TCL+T]<} => TCL+T\]<
@@ -467,11 +467,11 @@ proc filter {{args ""}} {
 #       v2.0
 #     information (mc.moretools command):
 #       Weed out all logical IP address' within <text>.  If no switch is specified,
-#       it will defaut to the -- switch.
+#       it will default to the -- switch.
 #       Switches:
 #         -overlap  Starts the next ip search point at next ip atom of the ip found.
 #         --        Starts the next ip search point after ip found.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -528,8 +528,8 @@ proc findip {{args ""}} {
 #       v2.0
 #     information (mc.moretools command):
 #       Find users on the partyline that match <handle!ident@host.domain>.
-#       <handle!ident@host.domain> can contain wildcards.
-#     dependencys (other than eggdrop provided commands):
+#       <handle!ident@host.domain> can contain wild cards.
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -562,7 +562,7 @@ proc findpartyusers {{args ""}} {
 #       Obtain a list of nicks that match <handle!ident@host.domain>.
 #       <handle!ident@host.domain> can contain wild cards.  If channel isn't
 #       specified, all channels are evaluated.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -604,8 +604,8 @@ proc findnicks {{args ""}} {
 #       make the channel field optional.  This proc is good for fixing this error,
 #       which only occurs with old bots and new scripts;
 #         TCL error: wrong # args: should be "getchanhost nickname channel"
-#       This is basically a command to help provide backwards compatability.
-#     dependencys (other than eggdrop provided commands):
+#       This is basically a command to help provide backwards compatibility.
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -635,18 +635,17 @@ if {$numversion < "1040200"} {
 	}
 }
 
-
 # i18n <type> [name]
 #     version:
 #       v1.0
 #     information (mc.moretools command):
-#       Get the opposite name of [name] pertaning to the <type>.  By opposite, I'm
-#       refering to short or long name.  <type> is one of country or language.
-#       [name] can consist of the short name or long name, case insensative.  If
-#       [name] isn't specified; a list of <type> is returned, with sublist entries of
-#       short name, long name.  There are way to many [names] to list here, review
+#       Get the opposite name of [name] pertaining to the <type>.  By opposite, I'm
+#       referring to short or long name.  <type> is one of country or language.
+#       [name] can consist of the short name or long name, case insensitive.  If
+#       [name] isn't specified; a list of <type> is returned, with sub list entries
+#       of short name, long name.  There are way to many [names] to list here, review
 #       the actually command for a list.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -877,8 +876,8 @@ proc i18n {{args ""}} {
 #       is good for fixing this error, which only occurs with old bots and new
 #       scripts;
 #         Tcl error: invalid command name "islinked"
-#       This is basically a command to help provide backwards compatability.
-#     dependencys (other than eggdrop provided commands):
+#       This is basically a command to help provide backwards compatibility.
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -921,7 +920,7 @@ if {$numversion < "1040200"} {
 #                (question mark) wildcard.
 #         ip   - It will mask as normal, with no '?' (question mark) replacements as
 #                does hostname.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -946,7 +945,7 @@ proc maskhostbytype {{args ""}} {
 	# made it to a variable incase someone wants to change it up.
 	set ident_max-length 9
 
-	# Define the maximum length the ircd allows for a hostname/ip.  Standard is 63,
+	# Define the maximum length the ircd allows for a hostname/ ip.  Standard is 63,
 	# however I made it to a variable incase someone wants to change it up.
 	set host_max-length 63
 
@@ -996,7 +995,7 @@ proc maskhostbytype {{args ""}} {
 #     version:
 #       v1.0
 #     information (mc.moretools command):
-#       Perform a mathmatical function, specified by <option>, on the list of
+#       Perform a mathematical function, specified by <option>, on the list of
 #       <numbers>.
 #       Valid <option>s are:
 #         average  - Average of <numbers>.
@@ -1011,9 +1010,9 @@ proc maskhostbytype {{args ""}} {
 #         m2ft     - Convert Meters to Feet.
 #         mi2km    - Convert Miles to Kilometers.
 #         km2mi    - Convert Kilometers to Miles.
-#         << There are so many conversion possibilities I can add, email me if you
+#         << There are so many conversion possibilities I can add, e-mail me if you
 #            have one you want me to add. >>
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -1044,12 +1043,12 @@ proc math {{args ""}} {
 	switch -- $option {
 		average {
 			if {[catch {expr ([join $numbers +])/[llength $numbers].} return]} {
-				error "error durring average calculation of \"[join $numbers]\": $return"
+				error "error during average calculation of \"[join $numbers]\": $return"
 			}; return $return
 		}
 		add {
 			if {[catch {expr [join $numbers +]} return]} {
-				error "error durring add calculation of \"[join $numbers]\": $return"
+				error "error during add calculation of \"[join $numbers]\": $return"
 			}; return $return
 		}
 		dec2lbin {
@@ -1065,22 +1064,22 @@ proc math {{args ""}} {
 		}
 		largest {
 			if {[catch {lsort -real $numbers} return]} {
-				error "error durring largest calculation of \"[join $numbers]\": $return"
+				error "error during largest calculation of \"[join $numbers]\": $return"
 			}; return [lindex $return end]
 		}
 		smallest {
 			if {[catch {lsort -real $numbers} return]} {
-				error "error durring smallest calculation of \"[join $numbers]\": $return"
+				error "error during smallest calculation of \"[join $numbers]\": $return"
 			}; return [lindex $return 0]
 		}
 		subtract {
 			if {[catch {expr [join $numbers -]} return]} {
-				error "error durring subtraction calculation of \"[join $numbers]\": $return"
+				error "error during subtraction calculation of \"[join $numbers]\": $return"
 			}; return $return
 		}
 		sum {
 			if {[catch {expr [join $numbers +]} return]} {
-				error "error durring sum calculation of \"[join $numbers]\": $return"
+				error "error during sum calculation of \"[join $numbers]\": $return"
 			}; return $return
 		}
 		f2c {
@@ -1137,8 +1136,8 @@ proc math {{args ""}} {
 #         ^k for color
 #         ^o for plain
 #       The ^ in these are actually ^'s and not the control key.  An open color code
-#       should be followed by a forground color number and an optional comma then
-#       background color number, such as <forground[,backgrond]>.
+#       should be followed by a foreground color number and an optional comma then
+#       background color number, such as <foreground[,background]>.
 #       Valid color numbers are;
 #         0 white       6 purple       12 light blue
 #         1 black       7 orange       13 pink
@@ -1146,7 +1145,7 @@ proc math {{args ""}} {
 #         3 green       9 light green  15 light grey
 #         4 light red  10 cyan
 #         5 brown      11 light cyan
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'replace' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
@@ -1177,7 +1176,7 @@ proc mirc_format {{args ""}} {
 #         -underline Strip the underline control code
 #         --         Marks the end of switches.
 #       If no switches are specified, then -all is assumed.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'replace' command from mc.moretools.
 #     examples:
@@ -1238,7 +1237,7 @@ proc mirc_strip {{args ""}} {
 #       v1.1
 #     information (mc.moretools command):
 #       Send a PRIVMSG to <nick|channel> stating <text>.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -1258,7 +1257,7 @@ proc msg {{args ""}} {
 #       v1.1
 #     information (mc.moretools command):
 #       Send a NOTICE to <nick|channel> stating <text>.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -1288,7 +1287,7 @@ proc notice {{args ""}} {
 #       Switches:
 #         -nocase   Matching is done without regard to case differences.
 #         --        Marks the end of switches.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #     examples:
 #       replace abcdefg [list cd xyz]  => abxyzefg
@@ -1306,7 +1305,7 @@ proc notice {{args ""}} {
 #       - <text> after replacements of keys with values from substitutions have been
 #         done.
 proc replace {{args ""}} {
-	badargs $args 2 4 "?switches? text substitustions"
+	badargs $args 2 4 "?switches? text substitutions"
 	set switches ""
 	for {set i 0} {[string match -* [set arg [lindex $args $i]]]} {incr i} {
 		if {![regexp -- {^-(nocase|-)$} $arg -> switch]} {
@@ -1320,7 +1319,7 @@ proc replace {{args ""}} {
 	set nocase [expr {([lsearch -exact $switches "nocase"] >= "0") ? 1 : 0}]
 	set text [lindex $args $i]
 	set substitutions [lindex $args [expr $i+1]]
-	badargs [lrange $args $i end] 2 2 "?switches? text substitustions"
+	badargs [lrange $args $i end] 2 2 "?switches? text substitutions"
 
 	# Check to see if $substitutions is in list format, if not make it so.
 	set substitutions [2list $substitutions]
@@ -1339,10 +1338,9 @@ proc replace {{args ""}} {
 	}; return $text
 }
 
-
 # sendemail <from> <to> <subject> <body> [headers] [-wait]
 #     version:
-#       v1.2
+#       v1.3
 #     information (mc.moretools command):
 #       Send an e-mail to <to>.
 #       <from> should be in this format: [list "Full Name" "from@address.com"]
@@ -1354,7 +1352,7 @@ proc replace {{args ""}} {
 #       [-wait], if you specify '-wait' then the proc will not be asynchronous,
 #         meaning it will wait for the e-mail send to finish before returning
 #         (thought up for CGI use).
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -1373,6 +1371,9 @@ proc replace {{args ""}} {
 #       - Nothing.
 set mc_moretools(smtp_server) smtp.server.com  ;# What's the smtp server's address?
 set mc_moretools(smtp_port) 25                 ;# What's the smtp port?
+
+# You can set this to emulate another SMTP client.
+set mc_moretools(xmailer) "Send eMail procedure by MC_8 (Carl M. Gregory) - http://mc.purehype.net/ - TCL [info tclversion] ([info patchlevel])."
 
 proc sendemail {{args ""}} {
 	badargs $args 4 6 "from to subject body ?headers? ?-wait?"
@@ -1441,12 +1442,13 @@ proc sendemail_fileevent {{args ""}} {
 		}
 		220 {
 			switch -- $last_command {
-				"" {sendemail_puts $sid "HELO $mc_moretools(smtp_server)"}
+				"" {sendemail_puts $sid "EHLO [info hostname]"}
 				default {sendemail_def_error}
 			}
 		}
 		250 {
 			switch -- $last_command {
+				EHLO {sendemail_puts $sid "MAIL From:<[lindex $from 1]>"}
 				HELO {sendemail_puts $sid "MAIL From:<[lindex $from 1]>"}
 				MAIL {
 					set addy [lindex $to 1]
@@ -1483,11 +1485,8 @@ proc sendemail_fileevent {{args ""}} {
 					foreach header $headers {
 						puts $sid $header
 					}
-					# I broke the X-Mailer puts up like this to fit on screen without word
-					# wrapping.
-					set x "Send eMail procedure by MC_8 - Carl M. Gregory -"
-					append x " http://mc.purehype.net/ -"
-					puts $sid "X-Mailer: $x TCL [info tclversion] ([info patchlevel])."
+					puts $sid "X-Mailer: $mc_moretools(xmailer)"
+					puts $sid "X-Originating-Host: [info hostname]"
 					puts $sid ""
 					foreach line [split $body \n] {
 						regsub -- ^\\. $line .. line
@@ -1497,6 +1496,37 @@ proc sendemail_fileevent {{args ""}} {
 					flush $sid
 					set mc_moretools($last_command_a) DATA_d
 				}
+				default {sendemail_def_error}
+			}
+		}
+		421 {
+			switch -- $last_command {
+				EHLO {sendemail_puts $sid "HELO [info hostname]"}
+				default {sendemail_def_error}
+			}
+		}
+		500 {
+			switch -- $last_command {
+				EHLO {sendemail_puts $sid "HELO [info hostname]"}
+				default {sendemail_def_error}
+			}
+		}
+		501 {
+			switch -- $last_command {
+				EHLO {sendemail_puts $sid "HELO [info hostname]"}
+				default {sendemail_def_error}
+			}
+		}
+		}
+		502 {
+			switch -- $last_command {
+				EHLO {sendemail_puts $sid "HELO [info hostname]"}
+				default {sendemail_def_error}
+			}
+		}
+		554 {
+			switch -- $last_command {
+				EHLO {sendemail_puts $sid "HELO [info hostname]"}
 				default {sendemail_def_error}
 			}
 		}
@@ -1521,8 +1551,8 @@ proc sendemail_def_error {} {
 #       Repeat <text> <times> times.  'str' is short for string repeat.  The 'repeat'
 #       subcommand of 'string' was introduced in TCL version 8.1; this command access
 #       that command if appropriate TCL version is found.  Otherwise, my code is
-#       initalized.  This is here more as a backwards compatability command.
-#     dependencys (other than eggdrop provided commands):
+#       initialized.  This is here more as a backwards compatibility command.
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -1553,8 +1583,8 @@ proc str {{args ""}} {
 #     version:
 #       v1.0
 #     information (mc.moretools command):
-#       Unlist <argsList> into coresponding [varName]'s.  [varName1] will contain the
-#       value of <argsList>'s index of 0, [varName2] will contain the value of
+#       Unlist <argsList> into corresponding [varName]'s.  [varName1] will contain
+#       the value of <argsList>'s index of 0, [varName2] will contain the value of
 #       <argsList>'s index of 1, and so on.  If no [varNames]'s are given then the
 #       <argsList> will be returned in string format, assuming <argsList> is already
 #       in list format.  If no [varName]'s are given and <argsList> is in string
@@ -1565,8 +1595,8 @@ proc str {{args ""}} {
 #       [varName]'s, both [varName]'s are set and the second index of <argList> is
 #       forgotten.  If the [varName] is 'args', it will contain a list of <argList>
 #       from the list index point it's at to the end.
-#       << This was difficult to explain, email me corrections if you wish. >>
-#     dependencys (other than eggdrop provided commands):
+#       << This was difficult to explain, e-mail me corrections if you wish. >>
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #     examples:
 #       % unlist [list "index 0" "index 1"] varName1 varName2
@@ -1579,7 +1609,7 @@ proc str {{args ""}} {
 #       2
 #
 #       % # Reverse, only the first 2 indexes messed with since there are only 2
-#           avilable varName's to put them into.
+#           available varName's to put them into.
 #       % unlist [list "index 0" "index 1" "index 2"] varName1 varName2
 #       2
 #
@@ -1643,7 +1673,7 @@ proc unlist {{args ""}} {
 #       Valid options are:
 #         decode - decode <text>.
 #         encode - encode <text>.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #       The 'filter' command from mc.mroetools.
@@ -1694,9 +1724,9 @@ proc url {{args ""}} {
 #       v1.1
 #     information (mc.moretools command):
 #       Try and locate the path of the given <executable_file>.  This will search
-#       through the given enviroment PATH's.  Same idea as the *nix/bsd 'which'
+#       through the given environment PATH's.  Same idea as the *nix/bsd 'which'
 #       command... just done in TCL to be OS independent.
-#     dependencys (other than eggdrop provided commands):
+#     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
 #       The 'unlist' command from mc.moretools.
 #     examples:
@@ -1709,10 +1739,10 @@ proc which {{args ""}} {
 
 	global env
 
-	set seperator [expr {([info exists env(OS)] &&
+	set separator [expr {([info exists env(OS)] &&
 		[string match *windows* [string tolower $env(OS)]])?";":":"}]
 
-	foreach path ". [split $env(PATH) $seperator]" {
+	foreach path ". [split $env(PATH) $separator]" {
 		set long_file [file join $path $file]
 		if {[file executable $long_file]} {
 			return $long_file
@@ -1730,6 +1760,15 @@ putlog "More Tools $mc_moretools(version) by MC_8 loaded."
 ##
 # History  ( <Fixed by> - [Found by] - <Info> )
 ##
+# v3.0.1 (09.13.02)
+#  MC_8   -     - Further upgraded 'sendemail' tcl command.  EHLO and HELO wasn't
+#                 following standards, was sending the smtp's server domain name
+#                 rather than the client's.  v1.2 -> v1.3
+#  MC_8   - Wcc - Upgraded the 'sendemail' tcl command to properly support esmtp
+#                 servers as well as smtp servers.  v1.2 -> v1.3
+#  fudded -     - Fixed some spelling errors.
+#  MC_8   -     - Fixed many spelling errors.
+#
 # v3.0 (07.20.02)
 #  MC_8 - - Added the 'unlist' command.  none -> v1.0
 #  MC_8 - - Added the 'url' command.  none -> 1.0
@@ -1772,8 +1811,8 @@ putlog "More Tools $mc_moretools(version) by MC_8 loaded."
 #           and `version` within the 'mc_moretools' array instead now.  And for the
 #           load checking, use `loaded`.
 #           *** POTENTIAL INCOMPATIBILITY ***
-#  MC_8 - - Upgraded replace command, added optional switchs -nocase, and --.  Also
-#           made it case sensative by default (not -nocase); if you were using TCL
+#  MC_8 - - Upgraded replace command, added optional switches -nocase, and --.  Also
+#           made it case sensitive by default (not -nocase); if you were using TCL
 #           8.1 or greater then it would automatically do -nocase.  v1.2 -> v1.3
 #  MC_8 - - Added 'mirc_format' command.  none -> v1.0
 #             |- Removed the 'bold' command, use the 'mirc_format' command instead.
@@ -1784,17 +1823,17 @@ putlog "More Tools $mc_moretools(version) by MC_8 loaded."
 #             `- Removed the 'uline' command, use the 'mirc_format' command instead.
 #           *** POTENTIAL INCOMPATIBILITY ***
 #  MC_8 - - Added the 'mirc_strip' command.  none -> v1.0
-#             |- Removed the 'strip:normal" command, use the 'mirc_script' command
+#             |- Removed the 'strip:normal" command, use the 'mirc_strip' command
 #             |  instead.
-#             |- Removed the 'strip:color" command, use the 'mirc_script' command
+#             |- Removed the 'strip:color" command, use the 'mirc_strip' command
 #             |  instead.
-#             |- Removed the 'strip:bold" command, use the 'mirc_script' command
+#             |- Removed the 'strip:bold" command, use the 'mirc_strip' command
 #             |  instead.
-#             |- Removed the 'strip:all" command, use the 'mirc_script' command
+#             |- Removed the 'strip:all" command, use the 'mirc_strip' command
 #             |  instead.
-#             |- Removed the 'strip:reverse" command, use the 'mirc_script' command
+#             |- Removed the 'strip:reverse" command, use the 'mirc_strip' command
 #             |  instead.
-#             `- Removed the 'strip:uline" command, use the 'mirc_script' command
+#             `- Removed the 'strip:uline" command, use the 'mirc_strip' command
 #                instead.
 #           *** POTENTIAL INCOMPATIBILITY ***
 #  MC_8 - - Cleaned up the 'gethost' command.  v1.1 -> v1.2
@@ -1812,35 +1851,35 @@ putlog "More Tools $mc_moretools(version) by MC_8 loaded."
 #
 # v2.4.1 (07.05.02)
 #  MC_8 - Paladin - Upgraded 'replace' to support TCL 8.0, also changed some code
-#                   around to make it more effecent.  v1.1 -> v1.2
+#                   around to make it more efficient.  v1.1 -> v1.2
 #  MC_8 - Paladin - Upgraded 'filt' to support TCL 8.0.  v2.0 -> v2.1
 #  MC_8 - Paladin - Updated 'chanint' to work with TCL 8.0.  v3.0 -> v3.1
 #
 # v2.4 (07.03.02)
 #  MC_8 - - Moved history to the bottom, too long.
-#  MC_8 - - Upgraded chanflag to utalize 'channel get' if avilable.  'channel get'
+#  MC_8 - - Upgraded chanflag to utilize 'channel get' if available.  'channel get'
 #           was introduced in eggdrop 1.6.11.  v2.1 -> v3.0
-#  MC_8 - - Upgraded chanint to utalize 'channel get' if avilable.  'channel get' was
-#           introduced in eggdrop 1.6.11.  v2.0 -> v3.0
+#  MC_8 - - Upgraded chanint to utilize 'channel get' if available.  'channel get'
+#           was introduced in eggdrop 1.6.11.  v2.0 -> v3.0
 #
 # v2.3 (07.02.02)
 #  MC_8 - - Cleaned up some bs from the 'sendemail' command.
 #             1) Chagned the _puts command from sendmail to sendemail.
 #             2) Forgot a '$sid' in a 'puts', therefor it was putting the body as the
-#                header (no blank line deviding them).
+#                header (no blank line dividing them).
 #  MC_8 - - Added the [-wait] option to the 'sendemail' command, makes it non async
-#           and waits for the email to send.  This is usefull if your using it in
+#           and waits for the e-mail to send.  This is useful if your using it in
 #           CGI.  v1.0 -> v1.1
 #
 # v2.2 (07.01.02)
 #  MC_8 - - Added 'sendemail' command.  v1.0
 #
 # v2.1.1 (06.18.02)
-#  MC_8 -        - Fixed conversion of string->list format for channel veriable
+#  MC_8 -        - Fixed conversion of string->list format for channel variable
 #                  within the gethost command.  v1.0 -> v1.1
-#  MC_8 -        - Fixed conversion of string->list format for channel veriable
+#  MC_8 -        - Fixed conversion of string->list format for channel variable
 #                  within the getchanhost command.  old -> v2.0
-#  MC_8 -        - Fixed conversion of string->list format for channel veriable
+#  MC_8 -        - Fixed conversion of string->list format for channel variable
 #                  within the findnick command.  v1.0 -> v1.1
 #  MC_8 -        - Fixed 'can't read "string": no such variable' within findip
 #                  command.  v1.0 -> v1.1
