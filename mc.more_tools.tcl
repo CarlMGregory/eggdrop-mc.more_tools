@@ -1,5 +1,5 @@
 ##
-# More Tools v2.4
+# More Tools v2.4.1
 #  by MC_8 - Carl M. Gregory <mc8@purehype.net>
 #
 # My Website - http://mc.purehype.net:81/
@@ -276,11 +276,11 @@ proc chanflag {channel flag} {
 	return 0
 }
 
-# v3.0
+# v3.1
 proc chanint {channel int} {
 	if {![catch {channel get $channel $flag} catch]} {return $catch}
 	set cache(chaninfo) [string tolower [channel info $channel]]
-	regsub -all -- {([\\\{\}\[\]\"])} [string tolower $int] {\\\1} int
+	regsub -all -- {([][\\\{\}\"])} [string tolower $int] {\\\1} int
 	if {[set temp(i) [lsearch -glob $cache(chaninfo) "$int *"]] == "-1"} {
 		return -1
 	}; return [lindex [split [lindex $cache(chaninfo) $temp(i)] " "] 1]
@@ -293,6 +293,8 @@ proc color {{num ""} {text ""}} {
 			set temp(1) {color [forground[,background] [text]]}
 			return -code error "wrong # args: should be \"$temp(1)\""
 		} elseif {![regexp {^([0-9][0-9]?(,[0-9][0-9]?)?)?$} $num]} {
+			# I do the regular expression like '[0-9][0-9]?' instead of '[0-9]{1,2}' so
+			# that it's backwards compatable with TCL 8.0.
 			set temp(1) {invalid color number format, should be ff[,bb]}
 			return -code error "couldn't formulate colored string: $temp(1)"
 		}; set x $num$text\003
@@ -319,9 +321,9 @@ proc dccchat {nick} {
 	}; return 0
 }
 
-# v2.0
+# v2.1
 proc filt {text} {
-	regsub -all -- {([\\\{\}\[\]\"])} $text {\\\1} text
+	regsub -all -- {([][\\\{\}\"])} $text {\\\1} text
 	return $text
 }
 
@@ -330,6 +332,8 @@ proc findip {arg} {
 	set ips ""
 	set temp(regex) {([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)}
 	append temp(regex) {\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)}
+	# I did the regular expression syntax like '[0-9][0-9]?[0-9]?' instead of
+	# '[0-9]{1,3}' so that it's backwards compatable with TCL 8.0.
 	while {[regexp -- $temp(regex) $arg dummy a b c d]} {
   	if {$a > 0 && $a < 256 && $b < 256 && $c < 256 && $d < 256} {
 			lappend ips $a.$b.$c.$d
@@ -461,13 +465,13 @@ proc normal {{arg ""}} {
 # v1.0
 proc notice {to text} {puthelp "NOTICE $to :$text"}
 
-# v1.1
+# v1.2
 proc replace {text subs} {
 	if {![catch {string map -nocase $subs $text} output]} {return $output}
-	for {set i 0} {[lindex $subs $i] != ""} {incr i 2} {
-		set temp(re_syntax) {([\\\*\+\?\{\}\,\(\)\:\[\]\.\^\$\=\!\|])}
-		regsub -all -- $temp(re_syntax) [lindex $subs $i] {\\\1} temp(temp)
-		regsub -all -- $temp(temp) $text [lindex $subs [expr $i+1]] text
+	set temp(re_syntax) {([][\\\*\+\?\{\}\,\(\)\:\.\^\$\=\!\|])}
+	foreach {a b} $subs {
+		regsub -all -- $temp(re_syntax) $a {\\\1} a
+		regsub -all -- $a $text $b text
 	}; return $text
 }
 
@@ -714,14 +718,20 @@ if {1} {
 # 3) Every other instance is a Minor level change Ie: add a new proc.
 ##
 
-set moretools_version v2.4
-set moretools "020400"
+set moretools_version v2.4.1
+set moretools "020401"
 
 putlog "More Tools $moretools_version by MC_8 loaded."
 
 ##
 # History  ( <Fixed by> - [Found by] - <Info> )
 ##
+# v2.4.1 (07.05.02)
+#  MC_8 - Paladin - Upgraded 'replace' to support TCL 8.0, also changed some code
+#                   around to make it more effecent.  v1.1 -> v1.2
+#  MC_8 - Paladin - Upgraded 'filt' to support TCL 8.0.  v2.0 -> v2.1
+#  MC_8 - Paladin - Updated 'chanint' to work with TCL 8.0.  v3.0 -> v3.1
+#
 # v2.4 (07.03.02)
 #  MC_8 - - Moved history to the bottom, too long.
 #  MC_8 - - Upgraded chanflag to utalize 'channel get' if avilable.  'channel get'
