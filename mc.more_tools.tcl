@@ -1,5 +1,5 @@
 ##
-# More Tools v2.4.1
+# More Tools v2.4.2
 #  by MC_8 - Carl M. Gregory <mc8@purehype.net>
 #
 # My Website - http://mc.purehype.net:81/
@@ -164,13 +164,10 @@
 #
 # replace <text> <substring newstring [substring newstring ...]>
 #     Replaces any occurrence of substring in <text> with newstring.
-#       example: replace abcdefg "cd xyz"  => abxyzefg
+#       example: replace abcdefg [list cd xyz]  => abxyzefg
 #     You can also specify multiple replace parameters.
-#       example: replace abcdefg "a A b B c C d D"  => ABCDefg
-#       example: replace abcdefg "d { the middle }"  => abc the middle efg
-#
-#     NOTE:
-#       substring and newstring goes in list format.
+#       example: replace abcdefg [list a A b B c C d D]  => ABCDefg
+#       example: replace abcdefg [list d " the middle "] => abc the middle efg
 #
 #       Replacement works from left to right.
 #
@@ -252,7 +249,7 @@
 #### Procedure coding
 
 # Inital unset, will be set at end.  So basically one can
-#   if {[info exists mretools]} { ;#then moretools loaded without error
+#   if {[info exists moretools]} { ;#then moretools loaded without error
 catch {unset moretools_version}
 catch {unset moretools}
 
@@ -627,43 +624,43 @@ proc str {text times} {
 	}; return $return
 }
 
-# v1.1
+# v1.2
 proc strip:all {text} {
-	regsub -all -- {\002} $text "" text ;#bold
-	regsub -all -- {\003([0-9][0-9]?(,[0-9][0-9]?)?)?} $text "" text ;#color
-	regsub -all -- {\017} $text "" text ;#normal
-	regsub -all -- {\026} $text "" text ;#reverse
-	regsub -all -- {\037} $text "" text ;#underline
+	regsub -all -- "\002" $text "" text ;#bold
+	regsub -all -- "\003(\[0-9\]\[0-9\]?(,\[0-9\]\[0-9\]?)?)?" $text "" text ;#color
+	regsub -all -- "\017" $text "" text ;#normal
+	regsub -all -- "\026" $text "" text ;#reverse
+	regsub -all -- "\037" $text "" text ;#underline
 	return $text
 }
 
-# v1.0
+# v1.1
 proc strip:bold {text} {
-	regsub -all -- {\002} $text "" text
+	regsub -all -- "\002" $text "" text
 	return $text
 }
 
-# v1.0
+# v1.1
 proc strip:color {text} {
-	regsub -all -- {\003([0-9][0-9]?(,[0-9][0-9]?)?)?} $text "" text
+	regsub -all -- "\003(\[0-9\]\[0-9\]?(,\[0-9\]\[0-9\]?)?)?" $text "" text
 	return $text
 }
 
-# v1.0
+# v1.1
 proc strip:normal {text} {
-	regsub -all -- {\017} $text "" text
+	regsub -all -- "\017" $text "" text
 	return $text
 }
 
-# v1.0
+# v1.1
 proc strip:reverse {text} {
-	regsub -all -- {\026} $text "" text
+	regsub -all -- "\026" $text "" text
 	return $text
 }
 
-# v1.0
+# v1.1
 proc strip:uline {text} {
-	regsub -all -- {\037} $text "" text
+	regsub -all -- "\037" $text "" text
 	return $text
 }
 
@@ -718,14 +715,22 @@ if {1} {
 # 3) Every other instance is a Minor level change Ie: add a new proc.
 ##
 
-set moretools_version v2.4.1
-set moretools "020401"
+set moretools_version v2.4.2
+set moretools "020402"
 
 putlog "More Tools $moretools_version by MC_8 loaded."
 
 ##
 # History  ( <Fixed by> - [Found by] - <Info> )
 ##
+# v2.4.2 (07.15.02)
+#  MC_8 - Wcc - Upgraded 'strip:all' proc to support TCL 8.0.  v1.1 -> v1.2
+#  MC_8 - Wcc - Upgraded 'strip:bold' proc to support TCL 8.0.  v1.0 -> v1.1
+#  MC_8 - Wcc - Upgraded 'strip:color' proc to support TCL 8.0.  v1.0 -> v1.1
+#  MC_8 - Wcc - Upgraded 'strip:uline' proc to support TCL 8.0.  v1.0 -> v1.1
+#  MC_8 - Wcc - Upgraded 'strip:normal' proc to support TCL 8.0.  v1.0 -> v1.1
+#  MC_8 - Wcc - Upgraded 'strip:reverse' proc to support TCL 8.0.  v1.0 -> v1.1
+#
 # v2.4.1 (07.05.02)
 #  MC_8 - Paladin - Upgraded 'replace' to support TCL 8.0, also changed some code
 #                   around to make it more effecent.  v1.1 -> v1.2
