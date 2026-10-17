@@ -1,5 +1,5 @@
 ##
-# More Tools v3.0.2
+# More Tools v3.0.3
 #  by MC_8 - Carl M. Gregory <mc8@purehype.net>
 #
 #    R.I.P. Mom, To always be remembered; Nancy Marie Gregory.
@@ -71,8 +71,8 @@
 #      - The addition of a new proc.
 ##
 catch {unset mc_moretools}
-array set mc_moretools [list   version    v3.0.2      \
-                               numversion 003000002   \
+array set mc_moretools [list   version    v3.0.3      \
+                               numversion 003000003   \
                                loaded     0           ]
 
 # mc_moretools(loaded) is set to zero here, near top, and near the bottom it get's
@@ -901,7 +901,7 @@ if {$numversion < "1040200"} {
 
 # maskhostbytype <nick!ident@host.domain> [type]
 #     version:
-#       v2.0.1
+#       v2.1
 #     information (mc.moretools command):
 #       Masks <nick!ident@host.domain> by <type>.  If [type] is not specified, then 5
 #       is assumed.
@@ -1344,7 +1344,7 @@ proc replace {{args ""}} {
 
 # sendemail <from> <to> <subject> <body> [headers] [-wait]
 #     version:
-#       v1.3
+#       v1.4
 #     information (mc.moretools command):
 #       Send an e-mail to <to>.
 #       <from> should be in this format: [list "Full Name" "from@address.com"]
@@ -1520,7 +1520,6 @@ proc sendemail_fileevent {{args ""}} {
 				EHLO {sendemail_puts $sid "HELO [info hostname]"}
 				default {sendemail_def_error}
 			}
-		}
 		}
 		502 {
 			switch -- $last_command {
@@ -1764,9 +1763,13 @@ putlog "More Tools $mc_moretools(version) by MC_8 loaded."
 ##
 # History  ( <Fixed by> - [Found by] - <Info> )
 ##
-# v3.0.2 (9.29.02)
+# v3.0.3 (09.30.02)
+#  MC_8 - Marek - Upgraded 'sendemail' tcl command.  Fixed 'invalid command name
+#                 "}"'.  v1.3 -> v1.4
+#
+# v3.0.2 (09.29.02)
 #  MC_8 - KrE80r - Upgraded 'maskhostbytype' tcl command.  Is now compatable with
-#                  TCL8.0.  v2.0 -> v2.0.1  (bugzilla # 167)
+#                  TCL8.0.  v2.0 -> v2.1  (bugzilla # 167)
 #
 # v3.0.1 (09.13.02)
 #  MC_8   -     - Further upgraded 'sendemail' tcl command.  EHLO and HELO wasn't
