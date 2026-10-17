@@ -1,5 +1,5 @@
 ##
-# More Tools v2.1.1
+# More Tools v2.2
 #  by MC_8 - Carl M. Gregory <mc8@purehype.net>
 #
 # My SVS Website - http://mc.purehype.net:81/
@@ -14,6 +14,9 @@
 ##
 # History
 ##
+# v2.2 (07.01.02)
+#  MC_8 - - Added 'sendemail' procedure.  v1.0
+#
 # v2.1.1 (06.18.02)
 #  MC_8 -        - Fixed conversion of string->list format for channel veriable
 #                  within the gethost proc.  v1.0 -> v1.1
@@ -313,6 +316,19 @@
 #     returns: mIRC compliant reverse
 
 #
+# sendemail <from> <to> <subject> <body> [header list]
+#     Sends an async email to <to>.
+#     Information:
+#       <from> should be in this format: [list "Full Name" "from@address.com"]
+#       <to> should be in this format: [list "Full Name_1" "from@address.com_1" \
+#                                            "Full Name_2" "from@address.com_2" \
+#                                             ...]
+#         As you can see, <to> can contain many addresses.
+#       [header list] should be in this format: [list "header 1" "header 2" ...]
+#         An example header list: [list "Content-Type: text/html"]
+#     returns:  nothing -- this proc is async
+
+#
 # str <text> <times>
 #     example: str "ho " 3 => ho ho ho
 #     returns: <string> repeated <times> times
@@ -588,6 +604,129 @@ proc reverse {{arg {}}} {
 	return \026$arg
 }
 
+
+# sendemail proc
+# v1.0
+
+set config(smtp_server) smtp.server.com  ;# What's the smtp server's address?
+set config(smtp_port) 25                 ;# What's the smtp port?
+
+proc sendemail {from to subject body {headerList ""}} {
+	global config
+	set smtp_server $config(smtp_server)
+	set smtp_port $config(smtp_port)
+	if {[catch {socket $smtp_server $smtp_port} sid]} {
+		error "Cannot create socket: $sid"
+	}
+	fconfigure $sid -blocking 0 -buffering line
+	set tout [after 60000 "sendemail_fileevent $sid timeout"]
+	fileevent $sid readable [list sendemail_fileevent $sid $tout $from $to $subject \
+		$body $headerList]
+}
+
+proc sendemail_fileevent {sid tout {from ""} {to ""} {subject ""} {body ""} {headerList ""}} {
+	global config
+	if {$tout == "timeout"} {
+		error "sendemail proc, Timeout connecting to SMTP server."
+		catch {unset config($last_command_a)}
+		close $sid
+		return
+	}
+	if {[eof $sid]} {
+		catch {unset config($last_command_a)}
+		close $sid
+		return
+	}; after cancel $tout
+	set last_command_a :temp:$sid:last_command
+	if {![info exists config($last_command_a)]} {set config($last_command_a) ""}
+	set last_command $config($last_command_a)
+	gets $sid line
+	set rfc [lindex [split $line] 0]
+	set info [join [lrange [split $line] 1 end]]
+	switch -- $rfc {
+		221 {
+			switch -- $last_command {
+				QUIT {
+					catch {unset config($last_command_a)}
+					close $sid
+					return
+				}
+				default {error "Unknown reply, '$rfc' to '$last_command'.  $info"}
+			}
+		}
+		220 {
+			switch -- $last_command {
+				"" {sendmail_puts $sid "HELO $config(smtp_server)"}
+				default {error "Unknown reply, '$rfc' to '$last_command'.  $info"}
+			}
+		}
+		250 {
+			switch -- $last_command {
+				HELO {sendmail_puts $sid "MAIL From:<[lindex $from 1]>"}
+				MAIL {
+					set addy [lindex $to 1]
+					set config(:temp:$sid:last_to) 1
+					sendmail_puts $sid "RCPT To:<$addy>"
+				}
+				RCPT {
+					set last_to_a :temp:$sid:last_to
+					set last_to $config($last_to_a)
+					if {$last_to >= [expr [llength $to]-1]} {
+						catch {unset config(:temp:$sid:last_to)}
+						sendmail_puts $sid "DATA "
+						return
+					}
+					incr config($last_to_a) 2
+					incr last_to 2
+					set addy [lindex $to $last_to]
+					sendmail_puts $sid "RCPT To:<$addy>"
+				}
+				DATA_d {
+					sendmail_puts $sid "QUIT"
+				}
+				default {error "Unknown reply, '$rfc' to '$last_command'.  $info"}
+			}
+		}
+		354 {
+			switch -- $last_command {
+				DATA {
+					foreach {name addy} $to {
+						puts $sid "To: \"$name\" <$addy>"
+					}
+					puts $sid "From: \"[lindex $from 0]\" <[lindex $from 1]>"
+					puts $sid "Subject: $subject"
+					foreach header $headerList {
+						puts $sid $header
+					}
+					# I broke the X-Mailer puts up like this to fit on screen without word
+					# wrapping.
+					set x "Send eMail procedure by MC_8 - Carl M. Gregory -"
+					append x " http://mc.purehype.net/ -"
+					puts $sid "X-Mailer: $x TCL [info tclversion] ([info patchlevel])."
+					puts ""
+					foreach line [split $body \n] {
+						regsub -- ^\\. $line .. line
+						puts $sid $line
+					}
+					puts $sid .
+					flush $sid
+					set config($last_command_a) DATA_d
+				}
+				default {error "Unknown reply, '$rfc' to '$last_command'.  $info"}
+			}
+		}
+		default {error "Unknown reply, '$rfc' to '$last_command'.  $info"}
+	}
+}
+
+proc sendmail_puts {sid command} {
+	global config
+	puts $sid $command
+	set config(:temp:$sid:last_command) [lindex [split $command] 0]
+	flush $sid
+}
+# ^
+
 # v1.0
 proc str {text times} {
 	if {![catch {string repeat $text $times} output]} {return $output}
@@ -675,6 +814,6 @@ if {1} {
 	putlog "More Tools:  Partyline action-fix applied."
 }
 
-set moretools_version v2.1.1
-set moretools "020101"
+set moretools_version v2.2
+set moretools "020200"
 putlog "More Tools $moretools_version by MC_8 loaded."
