@@ -1,6 +1,8 @@
 ##
-# More Tools v3.0.1
+# More Tools v3.0.2
 #  by MC_8 - Carl M. Gregory <mc8@purehype.net>
+#
+#    R.I.P. Mom, To always be remembered; Nancy Marie Gregory.
 #
 # My Website - http://mc.purehype.net:81/
 # Have a bug?  http://mc.purehype.net:81/bugzilla/
@@ -69,8 +71,8 @@
 #      - The addition of a new proc.
 ##
 catch {unset mc_moretools}
-array set mc_moretools [list   version    v3.0.1      \
-                               numversion 003000001   \
+array set mc_moretools [list   version    v3.0.2      \
+                               numversion 003000002   \
                                loaded     0           ]
 
 # mc_moretools(loaded) is set to zero here, near top, and near the bottom it get's
@@ -96,6 +98,7 @@ array set mc_moretools [list   version    v3.0.1      \
 #       format.
 #     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
+#       The 'unlist' command from mc.moretools.
 #     example:
 #       2list {abc "def hi"jk} => abc {"def} hi\"jk
 #       2list {abc {"def} hi\"jk} => abc {"def} hi\"jk
@@ -129,7 +132,9 @@ proc 2list {{args ""}} {
 #         The command_name is automatically found and doesn't need to be supplied.
 proc badargs {{args ""}} {
 	if {[llength $args] < 4} {
-		error {wrong # args: should be "badargs args min_llength max_llength argNames"}
+		error {
+			wrong # args: should be "badargs args min_llength max_llength argNames"
+		}
 	}
 
 	set index 0
@@ -574,7 +579,6 @@ proc findnicks {{args ""}} {
 	badargs $args 1 2 "nick!ident@host.domain ?channel?"
 	unlist $args hostmask channel
 
-
 	set hostmask [string tolower $hostmask]
 
 	if {$channel == ""} {set channels [channels]} \
@@ -895,10 +899,9 @@ if {$numversion < "1040200"} {
 	}
 }
 
-
 # maskhostbytype <nick!ident@host.domain> [type]
 #     version:
-#       v2.0
+#       v2.0.1
 #     information (mc.moretools command):
 #       Masks <nick!ident@host.domain> by <type>.  If [type] is not specified, then 5
 #       is assumed.
@@ -949,7 +952,7 @@ proc maskhostbytype {{args ""}} {
 	# however I made it to a variable incase someone wants to change it up.
 	set host_max-length 63
 
-	if {![regexp -- {^(.*?)!((.*)@(.*))$} $nuhost -> nick uhost ident host]} {
+	if {![regexp -- {^(.*[^!])!((.*)@(.*))$} $nuhost -> nick uhost ident host]} {
 		error "invalid nick!ident@host.domain: $nuhost"
 	}
 
@@ -1289,6 +1292,7 @@ proc notice {{args ""}} {
 #         --        Marks the end of switches.
 #     dependencies (other than eggdrop provided commands):
 #       The 'badargs' command from mc.moretools.
+#       The '2list' command from mc.moretools.
 #     examples:
 #       replace abcdefg [list cd xyz]  => abxyzefg
 #       replace abcdefg [list a A b B c C d D]  => ABCDefg
@@ -1760,6 +1764,10 @@ putlog "More Tools $mc_moretools(version) by MC_8 loaded."
 ##
 # History  ( <Fixed by> - [Found by] - <Info> )
 ##
+# v3.0.2 (9.29.02)
+#  MC_8 - KrE80r - Upgraded 'maskhostbytype' tcl command.  Is now compatable with
+#                  TCL8.0.  v2.0 -> v2.0.1  (bugzilla # 167)
+#
 # v3.0.1 (09.13.02)
 #  MC_8   -     - Further upgraded 'sendemail' tcl command.  EHLO and HELO wasn't
 #                 following standards, was sending the smtp's server domain name
