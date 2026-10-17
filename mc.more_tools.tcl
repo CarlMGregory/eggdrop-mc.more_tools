@@ -1,0 +1,581 @@
+##
+# More Tools v2.0 by MC_8 (Carl M. Gregory) <gregory@worldinter.net>
+#
+# My SVS Website - http://mc.purehype.net:81/
+##
+
+##
+# This is not a "cool" script, it's a tools script for other
+# scripters to use and/or learn with.
+##
+
+##
+# History
+##
+# v2.0 (11.05.01)
+#  MC_8 - Rewrote all procs.  If you used this script previously,
+#         please re-review the procs you use for some have changed
+#         it's output format... and some have been removed (other
+#         procs take there place).
+#
+# v1.3.1 (08.31.01)
+#  MC_8 - Fixed special character handling of botnet action fix.
+#
+# v1.3 (02.01.01)
+#  MC_8 - Fixed casing problem with findchanuser procedure.
+#  MC_8 - Added chanflagison
+# 
+# v1.2 (08.14.00)                             
+#  MC_8 - Found a lil problem with maskhost    
+#         proc.  If you specified ident@host   
+#         it would return !@.                  
+#  FireEgl - Added which proc.                 
+#  MC_8 - Added gethost proc.                  
+#  MC_8 - ? - Changed dnslookup to resolve,    
+#             1.5.3 and up carry ther own      
+#             dnslookup proc.                  
+#                                             
+# v1.1.9 (04.05.00)                           
+#  MC_8 - ? - Fixed maskhost a bit, the server 
+#             was doing it's own strange       
+#             masking to long idents n` hosts. 
+#             Only effects things above the    
+#             numbers of <nick>!9@36.  Undernet
+#             does the masking to it ok, but   
+#             EfNet just fux it to hell, making
+#             something like bla.bla.com into  
+#             *bla.bl to get it to fit (cutting
+#             off the wrong side). ANYHOW, tiz 
+#             fixed.                           
+#  MC_8 - Fixed special character return bug   
+#         proc findchanuser.                   
+#                                             
+# v1.1.8 (11-23-99) -not published yet        
+#  MC_8 - ZARPO - Eggdrop1.4.0+ has removed    
+#                 it's own internal time proc  
+#                 and let TCL take over on     
+#                 time call's.  This is        
+#                 evedently going to create    
+#                 errors with old scripts.     
+#                 I simply rewrote it back     
+#                 to the way it use to be when 
+#                 eggdrop1.3.28- took control. 
+#                 And no, will not conflict on 
+#                 higher/lower botversions!    
+#  MC_8 - Added on source putlog responces on  
+#         everything the bot catches and       
+#         re-procs.  (I like to know what the  
+#         scripts are changing.)               
+#  MC_8 - Contains the latest action.fix.tcl   
+#         To this day this action.fix has not  
+#         overwritten the old action.fix, yes  
+#         MY action.fix.tcl was submitted to   
+#         the eggdevel team so they can update 
+#         what comes with eggdrop, but there   
+#         bussy fixing all them bugs :-)       
+#         action.fix.tcl is no longer          
+#         nessassary to load, it is loaded     
+#         within this script.                  
+#                                             
+# v1.1.7 (10-30-99)                           
+#  MC_8 - VaultX - Eggdrop1.3.29+RC2 for some  
+#                  reason did not have the     
+#                  date proc, on source        
+#                  now tests to see if the     
+#                  date proc is there and      
+#                  doesn't contain errors.     
+#                  If needed moretools         
+#                  re-wrights the proc date.   
+#  MC_8 - Made realtime non relient on         
+#         alltools.                            
+#                                             
+# v1.1.6 (10-20-99)                           
+#  MC_8 - m8s - masktype proc wasn't masking   
+#               correctly                      
+#  MC_8 - added masktype's 10-19               
+#  MC_8 - made testip non dependent on         
+#         alltools script (found alltoos error)
+#                                             
+# v1.1.5 (10-12-99)                           
+#  MC_8 - added finduserchan                   
+#  MC_8 - modified lremove to work better.     
+#  MC_8 - fixed returns of []'d chr's not to   
+#         return as {[]'d}                     
+#  MC_8 - adjusted replace and lremove         
+#                                             
+# v1.1.4 (10-09-99)                           
+#  MC_8 - added findchanuser, masktype and     
+#         replace                              
+#                                             
+# v1.1.3 (09-28-99)                           
+#  MC_8 - added str                             
+#  MC_8 - cleaned up the definition section    
+#         for the procs                        
+#  MC_8 - fixed a typo in the ctcp proc        
+#                                             
+# v1.1.2 (08-08-99)                           
+#  MC_8 - fixed some bugs on the findip proc   
+#                                             
+# v1.1.1                                      
+#  MC_8 - added notice, msg, ctcp, bold        
+#         uline, reverse and color             
+#                                             
+# v1.1.0                                      
+#  MC_8 - added isparty and islink             
+#                                             
+# v1.0.1                                      
+#  MC_8 - Changed return output for dnslookup  
+#                                             
+# v1.0                                          
+#  MC_8 - Inital Release
+##
+
+##
+# Procedures:
+##
+# Scripters, to test if this script is loaded
+# variable $moretools will be set to moretools
+# current version number.
+# <major version><minor version><bug fix level> ((010000) <=- version 1.0.0)
+
+#
+# action <nick/#channel> <text>
+#     Sends an action.
+#     return: nothing
+
+#
+# biggest <numbers>
+#     returns: the number of greatest value
+
+#
+# bold [text]
+#     Puts the bold character around [text] (optional). If
+#     [text] isnt specified, a loned bold character will be
+#     returned.
+#     returns: mIRC compliant bold
+
+#
+# chanflag <channel> <flag>
+#     Tests to see if the channel flag is turned on or off.
+#     return: -1 if no such flag
+#              0 if flag is off
+#              1 if flag is on
+#              2 if unknown (ie. not + nor -)
+
+#
+# chanint <channel> <int>
+#     This is like chanflag, but gives the value of an
+#     integer channel set insted of a flag channel set.
+#     returns:  integer's value setting
+#              -1 if invalid integer setting
+
+#
+# color [forground[,background] [text]]
+#     Puts the color character (with forground[,background] numbers)
+#     around [text] (optional). If [text] is not specified, a loned
+#     color character will be returned.
+#     forground and background numbers are:
+#      0 white      6 purple      12 lightblue
+#      1 black      7 orange      13 pink
+#      2 blue       8 yellow      14 grey
+#      3 green      9 lightgreen  15 lightgrey
+#      4 lightred  10 cyan  
+#      5 brown     11 lightcyan  
+#
+#     returns: mIRC compliant color
+
+#
+# ctcp <nick/#channel> <text/ping>
+#     Sends a ctcp <text/ping> to nick or #channel.
+#     If it's a ping, the proc will automatically
+#     append the clock seconds to it.
+#     returns: nothing
+
+#
+# filt <text>
+#     Adds \ 's to {}[]" 's that are in the <text>.
+#     returns: <text> after adding \'s to special characters
+
+#
+# findip <text>
+#     Searches for logical ip address' within the <text>.
+#     return: a list of ips found
+
+#
+# findhand <hostmask>
+#     Finds handles on the party line.  <hostmask> can
+#     contain wildcards.
+#     returns: list of handles found; each entry in the
+#       list contains hostmask, the bot (s)he's on
+
+#
+# findnick <hostmask> [channel]
+#     Searchs [channel] to find nicks that match <hostmask>.
+#     Wildcards are accpeted in <hostmask>.  If channel isnt
+#     specified, it will search all channels the bot is in.
+#     returns: list of nick's found; each entry in the list
+#       contains IRC Nickname, channel
+
+#
+# getchanhost <nick> [channel]
+#     Finds the uhost of <nick>.  getchanhost is part of eggdrop, but
+#     older bot's that use it have [channel] as a <> and not [].
+#     This proc is good for fixing this error (occurs with old bots
+#     and new scripts): TCL error: wrong # args: should be "getchanhost
+#     nickname channel"
+#     return: ident@host
+
+#
+# islinked <bot>
+#     returns: "1" if the bot is currently linked, "0" otherwise
+
+#
+# lowest <numbers>
+#     returns: the number of smallest value
+
+#
+# masktype <hostmask> [type]
+#     Masks <hostmask> to one of the many masking types.
+#     Here are the types:
+#     Default == 5
+#      0 - *!user@host.domain
+#      1 - *!*user@host.domain
+#      2 - *!*@host.domain
+#      3 - *!*user@*.domain
+#      4 - *!*@*.domain
+#      5 - nick!user@host.domain (utterly useless, just returns <hostmask>)
+#      6 - nick!*user@host.domain
+#      7 - nick!*@host.domain
+#      8 - nick!*user@*.domain
+#      9 - nick!*@*.domain
+#     You can also specify a type of 10 to 19 which correspond to masks 0 
+#     to 9.  But if the host.domain is a;
+#       hostname = Instead of using a * wildcard to replace portions of the
+#                  host.domain, it replaces the numbers in the host.domain 
+#                  with a '?' (question mark) wildcard
+#       ip       = It will mask as normal, with no '?' (question mark)
+#                  replacments as does hostname.
+#     returns: mask'd host
+
+#
+# msg <nick/#channel> <text>
+#     Sends a message.
+#     return: nothing
+
+#
+# notice <nick/#channel> <text>
+#     Sends a notice.
+#     returns: nothing
+
+#
+# replace <text> <substring newstring ...>
+#     Replaces any occurrence of substring in <text> with newstring.
+#       example: replace abcdefg "cd xyz"  => abxyzefg
+#     You can also specify multiple replace parameters.
+#       example: replace abcdefg "a A b B c C d D"  => ABCDefg
+#       example: replace abcdefg "d { the middle }"  => abc the middle efg
+#
+#     NOTE:
+#       If the substring or the newstring has a ' ' (space) in it, you must
+#       enclose it in {} (brackets), even if it's a veriable.
+#       example: 
+#         .tcl set list "word1 word2" ; replace "word0 %list" "%list $list"
+#         Tcl: word0 word1
+#
+#         .tcl set list "word1 word2" ; replace "word0 %list" "%list {$list}"
+#         Tcl: word0 word1 word2
+#
+#       Replacement works from left to right.
+#
+#       substring (not newstring) uses regular expression matching. See
+#       http://tcl.activestate.com/man/tcl8.3/TclCmd/re_syntax.htm
+#
+#      returns: <text> after all substrings were replaced with newstrings
+
+#
+# reverse [text]
+#     Puts the reverse character around [text] (optional). If
+#     [text] isn't specified, a loned reverse character will
+#     be returned.
+#     returns: mIRC compliant reverse
+
+#
+# str <text> <times>
+#     example: str "ho " 3 => ho ho ho 
+#     returns: <string> repeated <times> times
+
+#
+# strip:all <text>
+#     Strips mIRC compliant color, underline, reverse and
+#     bold from the <text>.
+#     returns: <text> after striped
+
+#
+# strip:bold <text>
+#     Strips mIRC compliant bold characters from <text>.
+#     returns: <text> after striped
+
+#
+# strip:color <text>
+#     Strip mIRC compliant color from <text>.
+#     returns: <text> after striped
+
+#
+# strip:reverse <text>
+#     Strips mIRC compliant reverse characters from <text>.
+#     returns: <text> after striped
+
+#
+# strip:uline <text>
+#     Strips mIRC compliant underline characters from <text>.
+#     returns: <text> after striped
+
+#
+# uline [text]
+#     Puts the underline character around [text] (optional). If
+#     [text] isn't specified, a loned reverse character will
+#     be returned.
+#     returns: mIRC compliant underline
+
+#
+# which <executable_file>
+#     Finds the location of a executable file.
+#     returns: path/executable_file
+
+
+
+#### Procedure coding
+set moretools_version v2.0
+set moretools "020000"
+
+#
+proc action {to text} {puthelp "PRIVMSG $to :\001ACTION $text\001"}
+
+#
+proc biggest {numbers} {return [lindex [lsort -integer $numbers] end]}
+
+#
+proc bold {{arg {}}} {if {$arg != ""} {append arg \002};return \002$arg}
+
+#
+proc chanflag {channel flag} {
+ if {![validchan $channel]} {return -code error "no such channel record"}
+ set list [channel info $channel]
+ for {set i 0} {![regexp -- {^[0-9]*:[0-9]*$} [lindex $list $i]]} {incr i} {}
+ for {} {[regexp -- {^[0-9]*:[0-9]*$} [lindex $list $i]]} {incr i} {}
+ set list [lrange $list $i end]
+ foreach info [string tolower $list] {
+  if {[string range $info 1 end] != [string tolower $flag]} {continue}
+  if {[string index $info 0] == "-"} {
+   return 0
+  } elseif {[string index $info 0] == "+"} {return 1} else {return 2}
+ };return -1
+}
+
+#
+proc chanint {channel int} {
+ if {![validchan $channel]} {return -code error "no such channel record"}
+ set list [channel info $channel]
+ for {set i 0} {![regexp -- {^[0-9]*:[0-9]*$} [lindex $list $i]]} {incr i} {}
+ for {} {[regexp -- {^[0-9]*:[0-9]*$} [lindex $list $i]]} {incr i} {}
+ set list [lrange $list $i end]
+ foreach info [string tolower $list] {
+  if {[lindex $info 0] == [string tolower $int]} {return [lindex $info 1]}
+ };return -1
+}
+
+#
+proc color {{num {}} {text {}}} {
+ if {$text == ""} {set x $num} else {
+  if {$num == ""} {
+   return -code error "wrong # args: should be \"color [forground[,background] [text]]\""
+  } elseif {![regexp {^([0-9][0-9]?(,[0-9][0-9]?)?)?$} $num]} {
+   return -code error "couldn't formulate colored string: invalid color number format, should be ff\[,bb\]"
+  }; set x $test $num$text\003
+ }; return \003$x
+}
+
+#
+proc ctcp {to arg} {
+ set arg "[string toupper [lindex $arg 0]] [lrange $arg 1 end]"
+ if {([lindex $arg 0] == "PING") && ([lindex $arg 1] == "")} {set arg "PING [clock seconds]"}
+ puthelp "PRIVMSG $to :\001$arg\001"
+}
+
+#
+proc filt {text} {regsub -all -- {([\\\{\}\[\]\"])} $text {\\\1} text; return $text}
+
+#
+proc findip {arg} {
+ set ips ""
+ while {[regexp -- {([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)} $arg temp a b c d]} {
+  if {$a > 0 && $a < 256 && $b < 256 && $c < 256 && $d < 256} {lappend ips $a.$b.$c.$d}
+  set string [string range $string [expr [string first $a.$b.$c.$d $string]+1] end]
+ }; return $ips
+}
+
+#
+proc findhand {hostmask} {
+ set list ""
+ foreach user [whom *] {
+  set uhost [format %s!%s [lindex $user 0] [lindex $user 2]]
+  if {![string match [string tolower $hostmask] $uhost]} {continue}
+  lappend list [list $uhost [lindex $user 1]]
+ }; return $list
+}
+
+#
+proc findnick {hostmask {channel {}} {
+ if {![validchan $channel]} {
+  if {$channel != ""} {return -code error "no such channel record"} else {
+   set channel [channels]
+  }
+ }; set buffer "" ; set hostmask [string tolower $hostmask]
+ foreach chan $channels {
+  foreach user [chanlist $chan] {
+   if {[string match $hostmask [string tolower $user![getchanhost $user $chan]]]} {
+    lappend buffer [list $user $chan]
+   }
+  }
+ }; return $buffer
+}
+
+# Older bots don't support getchanhost without a channel.
+# This is a simple fix.
+if {[catch {getchanhost -test}]} {
+ if {[info commands mc:fix:v1:getchanhost] == ""} {
+  rename getchanhost mc:fix:v1:getchanhost
+ }
+ proc getchanhost {nick {channel {}}} {
+  if {![validchan $channel]} {
+   if {$channel != ""} {return -code error "no such channel record"} else {
+    set channel [channels]
+   }
+  }
+  foreach chan $channel {if {[onchan $nick $chan]} {return [mc:fix:v1:getchanhost $nick $chan]}}
+  return ""
+ }
+}
+
+#
+proc gethost {nick {channel {}}} {
+ if {![catch {set return [getchanhost $nick]}]} {return $return}
+ if {![validchan $channel]} {
+  if {$channel != ""} {return -code error "no such channel record"} else {
+   set channel [channels]
+  }
+ }
+ foreach chan $channel {if {[onchan $nick $chan]} {return [getchanhost $nick $chan]}}
+ return ""
+}
+
+#
+if {[catch {islinked -test}]} {
+ proc islinked {bot} {
+  if {[lsearch -exact [string tolower [bots]] [string tolower $bot]] == "-1"} {return 0}
+  return 1
+ }
+}
+
+#
+proc lowest {numbers} {return [lindex [lsort -integer $numbers] 0]}
+
+#
+proc masktype {hostmask type} {
+ set ident_max-length 9
+ set host_max-length 63
+ scan $hostmask {%[^!]!%[^@]@%s} nick ident host
+ set maskhost 1
+ if {[regexp -- {^1[0-9]$} $type]} {
+  if {!([regexp -- {^([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)$} $host temp a b c d] && ($a > 0 && $a < 255 && $b < 255 && $c < 255 && $d < 255))} {
+   regsub -all {[0-9]} $host "?" host
+   set maskhost 0
+  };set type [string index $type 1]
+ }
+ if {[regexp -- {^[0-4]$} $type]} {set nick "*"}
+ if {[regexp -- {^[2479]$} $type]} {set ident "*"}
+ if {[regexp -- {^[1368]$} $type]} {set ident "*[string trimleft $ident ~]"}
+ if {[regexp -- {^[3489]$} $type]} {if {$maskhost} {scan [maskhost $host] {%[^@]@%s} temp host}}
+ if {[string length $ident] > ${ident_max-length}} {
+  set ident "*[string range $ident [expr [string length $ident]-${ident_max-length}] end]"
+ }
+ if {[string length $host] > ${host_max-length}} {
+  set host "*[string range $host [expr [string length $host]-${host_max-length}] end]"
+ }; return [format "%s!%s@%s" $nick $ident $host]
+}
+
+#
+proc msg {to text} {puthelp "PRIVMSG $to :$text"}
+
+#
+proc notice {to text} {puthelp "NOTICE $to :$text"}
+
+#
+proc replace {text subs} {
+ for {set i 0} {[lindex $subs $i] != ""} {incr i 2} {
+  regsub -all -- [lindex $subs $i] $text [lindex $subs [expr $i+1]] text
+ }; return $text
+}
+
+#
+proc reverse {{arg {}}} {if {$arg != ""} {append arg \026};return \026$arg}
+
+#
+proc str {text times} {
+ if {![catch {string repeat $text $times} output]} {return $output}
+ for {set i 1; set return ""} {($i <= $times) && ($times > 0)} {incr i} {append return $text}
+ return $return
+}
+
+#
+proc strip:all {text} {
+ regsub -all -- {\002} $text "" text
+ regsub -all -- {\003([0-9][0-9]?(,[0-9][0-9]?)?)?} $text "" text
+ regsub -all -- {\026} $text "" text
+ regsub -all -- {\037} $text "" text
+ return $text
+}
+
+#
+proc strip:bold {text} {regsub -all -- {\002} $text "" text; return $text}
+
+#
+proc strip:color {text} {
+ regsub -all -- {\003([0-9][0-9]?(,[0-9][0-9]?)?)?} $text "" text
+ return $text
+}
+
+#
+proc strip:reverse {text} {regsub -all -- {\026} $text "" text; return $text}
+
+#
+proc strip:uline {text} {regsub -all -- {\037} $text "" text; return $text}
+
+#
+proc uline {{arg {}}} {if {$arg != ""} {append arg \037};return \037$arg}
+
+#
+proc which {exec} {
+ if {![catch {exec which $exec} output]}  {return $output}
+ global env
+ if {[info exists env(OS)] && [string match *windows* [string tolower $env(OS)]]} {
+  set temp ";"
+ } else {set temp ":"}
+ foreach path [split $env(PATH) $temp] {
+  if {[file executable "$path/$exec"]} {return "$path/$exec"}
+ }; return ""
+}
+
+bind filt - "\001ACTION *\001" filt_act
+proc filt_act {idx text} {
+ scan $text "%s %\[^\001\]\001" temp text
+ return ".me $text"
+}
+bind filt - "/me *" filt_telnet_act
+bind filt - "/action *" filt_telnet_act
+proc filt_telnet_act {idx text} {
+ scan $text "%s %\[^\0\]\0" temp text
+ return ".me $text"
+}
+
+putlog "More Tools $moretools_version by MC_8 loaded."
