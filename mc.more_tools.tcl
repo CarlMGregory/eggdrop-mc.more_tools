@@ -1,166 +1,25 @@
 ##
-# More Tools v2.3
+# More Tools v2.4
 #  by MC_8 - Carl M. Gregory <mc8@purehype.net>
 #
-# My SVS Website - http://mc.purehype.net:81/
+# My Website - http://mc.purehype.net:81/
 # Have a bug?  http://mc.purehype.net:81/bugzilla/
 ##
 
 ##
-# This is not a "cool" script, it's a tools script for other
-# scriptures to use and/ or learn with.
+# This is not a "cool" script, it's a tools script for other scriptures to use and/
+# or learn with.
 ##
 
 ##
-# History
-##
-# v2.3 (07.02.02)
-#  MC_8 - - Cleaned up some bs from the 'sendemail' proc.
-#             1) Chagned the _puts proc from sendmail to sendemail.
-#             2) Forgot a '$sid' in a 'puts', therefor it was putting the body as the
-#                header (no blank line deviding them).
-#  MC_8 - - Added the [-wait] option to the 'sendemail' proc, makes it non async and
-#           waits for the email to send.  This is usefull if your using it in CGI.
-#           v1.0 -> v1.1
-#
-# v2.2 (07.01.02)
-#  MC_8 - - Added 'sendemail' procedure.  v1.0
-#
-# v2.1.1 (06.18.02)
-#  MC_8 -        - Fixed conversion of string->list format for channel veriable
-#                  within the gethost proc.  v1.0 -> v1.1
-#  MC_8 -        - Fixed conversion of string->list format for channel veriable
-#                  within the getchanhost proc.  old -> v2.0
-#  MC_8 -        - Fixed conversion of string->list format for channel veriable
-#                  within the findnick proc.  v1.0 -> v1.1
-#  MC_8 -        - Fixed 'can't read "string": no such variable' within findip
-#                  proc.  v1.0 -> v1.1
-#  MC_8 -        - Fixed string->list format error in ctcp proc.  v1.1 -> v1.2
-#  MC_8 - Jürgen - Upgraded masktype proc, was giving error 'couldn't set
-#                  variable "temp"'.  v1.2 -> v1.3
-#
-# v2.1 (04.24.02)
-#  MC_8 - - Added 'dccchat' and 'normal' command.
-#  MC_8 - - Upgraded 'chanflag' proc, defaults to 0 rather than the other way
-#           around.  v2.0 -> v2.1
-#  MC_8 - - Upgraded 'masktype' proc, fixed some minor errors.
-#             o If ident@host == test@me@192.168.0.1, it would set ident to
-#               'test' and host to 'me@192.168.0.1'.
-#             o Types *1,3,6,8 is support to remove the ident's first ~.  It was
-#               removing all continues (from left) ~'s.
-#             o A little more efficient, by caching some commands.
-#           v1.1 -> v1.2
-#  MC_8 - - Added the 'normal' character code to 'strip:all' proc.  v1.0 -> v1.1
-#  MC_8 - - Added the 'strip:normal' proc.  -> v1.0
-#
-# v2.0.2 (03.17.02)
-#  MC_8 - - Fixed error in masktype proc; if type is 10-19 and the host is an ip
-#           and it has a 255 in any of the 4 atoms- it would be treated as a
-#           host rather than an ip.  v1.0 -> v1.1
-#  MC_8 - - Fixed listing error in 'ctcp' proc. v1.0 -> v1.1
-#  MC_8 - - Re coded the action fix filter proc's.
-#  MC_8 - - Upgraded chanflag proc to v2.0, faster.
-#  MC_8 - - Upgraded 'chanint' proc to v2.0, faster.
-#  MC_8 - - Fixed 'couldn't compile regular expression pattern' problem with
-#           replace proc.
-#  MC_8 - - Fixed set x bug in color proc.
-#
-# v2.0.1 (11.11.01)
-#  MC_8 - - Fixed 'missing close-brace' startup crash error for the 'findnick'
-#           proc.
-#  MC_8 - - 'replace' will not try and utilize string map, if error (older
-#           version of tcl don't support it), it will go with the home grown
-#           procedure.
-#
-# v2.0 (11.05.01)
-#  MC_8 - - Rewrote all proc's.  If you used this script previously, please
-#           re-review the proc's you use for some have changed it's output
-#           format... and some have been removed (other proc's take there
-#           place).
-#
-# v1.3.1 (08.31.01)
-#  MC_8 - - Fixed special character handling of botnet action fix.
-#
-# v1.3 (02.01.01)
-#  MC_8 - - Fixed casing problem with findchanuser procedure.
-#  MC_8 - - Added 'chanflagison'.
-#
-# v1.2 (08.14.00)
-#  MC_8    - - Found a little problem with 'maskhost' proc.  If you specified
-#              ident@host it would return !@.
-#  FireEgl - - Added which proc.
-#  MC_8    - - Added 'gethost' proc.
-#  MC_8    - - Changed 'dnslookup' to resolve, 1.5.3 and up carry there own
-#              dnslookup proc.
-#
-# v1.1.9 (04.05.00)
-#  MC_8 - - Fixed maskhost a bit, the server was doing it's own strange masking
-#           to long ident's and hosts.  Only effects things above the numbers of
-#           <nick>!9@36.  Undernet does the masking to it ok, but EfNet just
-#           fucks it to hell, making something like bla.bla.com into *bla.bl to
-#           get it to fit (cutting off the wrong side). ANYHOW, it is fixed.
-#  MC_8 - - Fixed special character return bug proc 'findchanuser'.
-#
-# v1.1.8 (11-23-99) -not published yet
-#  MC_8 - ZARPO - Eggdrop1.4.0+ has removed it's own internal time proc and let
-#                 TCL take over on time call's.  This is evidently going to
-#                 create errors with old scripts.  I simply rewrote it back to
-#                 the way it use to be when eggdrop1.3.28- took control.  And
-#                 no, will not conflict on higher/ lower bot versions!
-#  MC_8 -       - Added on source putlog responses on everything the bot catches
-#                 and re-proc's.  (I like to know what the scripts are
-#                 changing.)
-#  MC_8 -       - Added the latest action.fix tcl code.
-#
-# v1.1.7 (10-30-99)
-#  MC_8 - VaultX - Eggdrop1.3.29+RC2 for some reason did not have the date proc,
-#                  on source now tests to see if the date proc is there and
-#                  doesn't contain errors.  If needed moretools re-wrights the
-#                  proc date.
-#  MC_8 -        - Made realtime non reliant on alltools.
-#
-# v1.1.6 (10-20-99)
-#  MC_8 - m8s - 'masktype' proc wasn't masking correctly.
-#  MC_8 -     - Added masktype's 10-19.
-#  MC_8 -     - Made testip non dependent on alltools script (found alltools
-#               error).
-#
-# v1.1.5 (10-12-99)
-#  MC_8 - - Added 'finduserchan'.
-#  MC_8 - - Modified lremove to work better.
-#  MC_8 - - Fixed returns of []'d characters not to return as {[]'d}.
-#  MC_8 - - Adjusted replace and lremove.
-#
-# v1.1.4 (10-09-99)
-#  MC_8 - - Added 'findchanuser', 'masktype' and 'replace'.
-#
-# v1.1.3 (09-28-99)
-#  MC_8 - - Added 'str'.
-#  MC_8 - - Cleaned up the definition section for the proc's.
-#  MC_8 - - Fixed a typo in the 'ctcp' proc.
-#
-# v1.1.2 (08-08-99)
-#  MC_8 - - Fixed some bugs on the 'findip' proc.
-#
-# v1.1.1
-#  MC_8 - - Added 'notice', 'msg', 'ctcp', 'bold', 'uline', 'reverse' and
-#           'color'.
-#
-# v1.1.0
-#  MC_8 - - Added 'isparty' and 'islink'.
-#
-# v1.0.1
-#  MC_8 - - Changed return output for 'dnslookup'.
-#
-# v1.0
-#  MC_8 - - Initial Release.
+# History -- At the end of the script.
 ##
 
 ##
-# Procedures:
+# Procedure information:
 ##
-# Scriptures, to test if this script is loaded variable $moretools will be set
-# to moretools current version number.
+# Scriptures, to test if this script is loaded variable $moretools will be set to
+# moretools current version number.
 # <major version><minor version><bug fix level> ((010000) <- version 1.0.0)
 
 #
@@ -409,15 +268,17 @@ proc bold {{arg ""}} {
 	return \002$arg
 }
 
-# v2.1
+# v3.0
 proc chanflag {channel flag} {
+	if {![catch {channel get $channel $flag} catch]} {return $catch}
 	set temp(1) [string tolower [channel info $channel]]
 	if {[lsearch -exact $temp(1) +[string tolower $flag]] >= "0"} {return 1}
 	return 0
 }
 
-# v2.0
+# v3.0
 proc chanint {channel int} {
+	if {![catch {channel get $channel $flag} catch]} {return $catch}
 	set cache(chaninfo) [string tolower [channel info $channel]]
 	regsub -all -- {([\\\{\}\[\]\"])} [string tolower $int] {\\\1} int
 	if {[set temp(i) [lsearch -glob $cache(chaninfo) "$int *"]] == "-1"} {
@@ -841,6 +702,171 @@ if {1} {
 	putlog "More Tools:  Partyline action-fix applied."
 }
 
-set moretools_version v2.3
-set moretools "020300"
+##
+# Moretools version changes rules
+##
+#  <major><minor><bug>
+#  ^^ version level subset's.
+# 1) Major only changes if a proc is removed, the arguments change or the return o
+#    a proc changes.
+# 2) Bug changes when someone has changed in an existing proc -- but doesn't change
+#    the arguments or the return of that proc.
+# 3) Every other instance is a Minor level change Ie: add a new proc.
+##
+
+set moretools_version v2.4
+set moretools "020400"
+
 putlog "More Tools $moretools_version by MC_8 loaded."
+
+##
+# History  ( <Fixed by> - [Found by] - <Info> )
+##
+# v2.4 (07.03.02)
+#  MC_8 - - Moved history to the bottom, too long.
+#  MC_8 - - Upgraded chanflag to utalize 'channel get' if avilable.  'channel get'
+#           was introduced in eggdrop 1.6.11.  v2.1 -> v3.0
+#  MC_8 - - Upgraded chanint to utalize 'channel get' if avilable.  'channel get' was
+#           introduced in eggdrop 1.6.11.  v2.0 -> v3.0
+#
+# v2.3 (07.02.02)
+#  MC_8 - - Cleaned up some bs from the 'sendemail' proc.
+#             1) Chagned the _puts proc from sendmail to sendemail.
+#             2) Forgot a '$sid' in a 'puts', therefor it was putting the body as the
+#                header (no blank line deviding them).
+#  MC_8 - - Added the [-wait] option to the 'sendemail' proc, makes it non async and
+#           waits for the email to send.  This is usefull if your using it in CGI.
+#           v1.0 -> v1.1
+#
+# v2.2 (07.01.02)
+#  MC_8 - - Added 'sendemail' procedure.  v1.0
+#
+# v2.1.1 (06.18.02)
+#  MC_8 -        - Fixed conversion of string->list format for channel veriable
+#                  within the gethost proc.  v1.0 -> v1.1
+#  MC_8 -        - Fixed conversion of string->list format for channel veriable
+#                  within the getchanhost proc.  old -> v2.0
+#  MC_8 -        - Fixed conversion of string->list format for channel veriable
+#                  within the findnick proc.  v1.0 -> v1.1
+#  MC_8 -        - Fixed 'can't read "string": no such variable' within findip
+#                  proc.  v1.0 -> v1.1
+#  MC_8 -        - Fixed string->list format error in ctcp proc.  v1.1 -> v1.2
+#  MC_8 - Jürgen - Upgraded masktype proc, was giving error 'couldn't set
+#                  variable "temp"'.  v1.2 -> v1.3
+#
+# v2.1 (04.24.02)
+#  MC_8 - - Added 'dccchat' and 'normal' command.
+#  MC_8 - - Upgraded 'chanflag' proc, defaults to 0 rather than the other way
+#           around.  v2.0 -> v2.1
+#  MC_8 - - Upgraded 'masktype' proc, fixed some minor errors.
+#             o If ident@host == test@me@192.168.0.1, it would set ident to
+#               'test' and host to 'me@192.168.0.1'.
+#             o Types *1,3,6,8 is support to remove the ident's first ~.  It was
+#               removing all continues (from left) ~'s.
+#             o A little more efficient, by caching some commands.
+#           v1.1 -> v1.2
+#  MC_8 - - Added the 'normal' character code to 'strip:all' proc.  v1.0 -> v1.1
+#  MC_8 - - Added the 'strip:normal' proc.  -> v1.0
+#
+# v2.0.2 (03.17.02)
+#  MC_8 - - Fixed error in masktype proc; if type is 10-19 and the host is an ip
+#           and it has a 255 in any of the 4 atoms- it would be treated as a
+#           host rather than an ip.  v1.0 -> v1.1
+#  MC_8 - - Fixed listing error in 'ctcp' proc. v1.0 -> v1.1
+#  MC_8 - - Re coded the action fix filter proc's.
+#  MC_8 - - Upgraded chanflag proc to v2.0, faster.
+#  MC_8 - - Upgraded 'chanint' proc to v2.0, faster.
+#  MC_8 - - Fixed 'couldn't compile regular expression pattern' problem with
+#           replace proc.
+#  MC_8 - - Fixed set x bug in color proc.
+#
+# v2.0.1 (11.11.01)
+#  MC_8 - - Fixed 'missing close-brace' startup crash error for the 'findnick'
+#           proc.
+#  MC_8 - - 'replace' will not try and utilize string map, if error (older
+#           version of tcl don't support it), it will go with the home grown
+#           procedure.
+#
+# v2.0 (11.05.01)
+#  MC_8 - - Rewrote all proc's.  If you used this script previously, please
+#           re-review the proc's you use for some have changed it's output
+#           format... and some have been removed (other proc's take there
+#           place).
+#
+# v1.3.1 (08.31.01)
+#  MC_8 - - Fixed special character handling of botnet action fix.
+#
+# v1.3 (02.01.01)
+#  MC_8 - - Fixed casing problem with findchanuser procedure.
+#  MC_8 - - Added 'chanflagison'.
+#
+# v1.2 (08.14.00)
+#  MC_8    - - Found a little problem with 'maskhost' proc.  If you specified
+#              ident@host it would return !@.
+#  FireEgl - - Added which proc.
+#  MC_8    - - Added 'gethost' proc.
+#  MC_8    - - Changed 'dnslookup' to resolve, 1.5.3 and up carry there own
+#              dnslookup proc.
+#
+# v1.1.9 (04.05.00)
+#  MC_8 - - Fixed maskhost a bit, the server was doing it's own strange masking
+#           to long ident's and hosts.  Only effects things above the numbers of
+#           <nick>!9@36.  Undernet does the masking to it ok, but EfNet just
+#           fucks it to hell, making something like bla.bla.com into *bla.bl to
+#           get it to fit (cutting off the wrong side). ANYHOW, it is fixed.
+#  MC_8 - - Fixed special character return bug proc 'findchanuser'.
+#
+# v1.1.8 (11-23-99) -not published yet
+#  MC_8 - ZARPO - Eggdrop1.4.0+ has removed it's own internal time proc and let
+#                 TCL take over on time call's.  This is evidently going to
+#                 create errors with old scripts.  I simply rewrote it back to
+#                 the way it use to be when eggdrop1.3.28- took control.  And
+#                 no, will not conflict on higher/ lower bot versions!
+#  MC_8 -       - Added on source putlog responses on everything the bot catches
+#                 and re-proc's.  (I like to know what the scripts are
+#                 changing.)
+#  MC_8 -       - Added the latest action.fix tcl code.
+#
+# v1.1.7 (10-30-99)
+#  MC_8 - VaultX - Eggdrop1.3.29+RC2 for some reason did not have the date proc,
+#                  on source now tests to see if the date proc is there and
+#                  doesn't contain errors.  If needed moretools re-wrights the
+#                  proc date.
+#  MC_8 -        - Made realtime non reliant on alltools.
+#
+# v1.1.6 (10-20-99)
+#  MC_8 - m8s - 'masktype' proc wasn't masking correctly.
+#  MC_8 -     - Added masktype's 10-19.
+#  MC_8 -     - Made testip non dependent on alltools script (found alltools
+#               error).
+#
+# v1.1.5 (10-12-99)
+#  MC_8 - - Added 'finduserchan'.
+#  MC_8 - - Modified lremove to work better.
+#  MC_8 - - Fixed returns of []'d characters not to return as {[]'d}.
+#  MC_8 - - Adjusted replace and lremove.
+#
+# v1.1.4 (10-09-99)
+#  MC_8 - - Added 'findchanuser', 'masktype' and 'replace'.
+#
+# v1.1.3 (09-28-99)
+#  MC_8 - - Added 'str'.
+#  MC_8 - - Cleaned up the definition section for the proc's.
+#  MC_8 - - Fixed a typo in the 'ctcp' proc.
+#
+# v1.1.2 (08-08-99)
+#  MC_8 - - Fixed some bugs on the 'findip' proc.
+#
+# v1.1.1
+#  MC_8 - - Added 'notice', 'msg', 'ctcp', 'bold', 'uline', 'reverse' and
+#           'color'.
+#
+# v1.1.0
+#  MC_8 - - Added 'isparty' and 'islink'.
+#
+# v1.0.1
+#  MC_8 - - Changed return output for 'dnslookup'.
+#
+# v1.0
+#  MC_8 - - Initial Release.
+##
