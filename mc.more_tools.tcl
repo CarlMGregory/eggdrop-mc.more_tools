@@ -1,5 +1,5 @@
 ##
-# More Tools v2.0 by MC_8 (Carl M. Gregory) <gregory@worldinter.net>
+# More Tools v2.0.1 by MC_8 - Carl M. Gregory <mc8@purehype.net>
 #
 # My SVS Website - http://mc.purehype.net:81/
 ##
@@ -12,6 +12,13 @@
 ##
 # History
 ##
+# v2.0.1 (11.11.01)
+#  MC_8 - Fixed 'missing close-brace' startup crash error for the
+#         findnick proc.
+#  MC_8 - Repace will not try and utalize string map, if error 
+#         (older version of tcl don't support it), it will go with
+#         the home grown procedure.
+#
 # v2.0 (11.05.01)
 #  MC_8 - Rewrote all procs.  If you used this script previously,
 #         please re-review the procs you use for some have changed
@@ -345,8 +352,8 @@
 
 
 #### Procedure coding
-set moretools_version v2.0
-set moretools "020000"
+set moretools_version v2.0.1
+set moretools "020001"
 
 #
 proc action {to text} {puthelp "PRIVMSG $to :\001ACTION $text\001"}
@@ -357,7 +364,7 @@ proc biggest {numbers} {return [lindex [lsort -integer $numbers] end]}
 #
 proc bold {{arg {}}} {if {$arg != ""} {append arg \002};return \002$arg}
 
-#
+# v1.0
 proc chanflag {channel flag} {
  if {![validchan $channel]} {return -code error "no such channel record"}
  set list [channel info $channel]
@@ -424,14 +431,13 @@ proc findhand {hostmask} {
  }; return $list
 }
 
-#
-proc findnick {hostmask {channel {}} {
+# v1.0
+proc findnick {hostmask {channel ""}} {
  if {![validchan $channel]} {
-  if {$channel != ""} {return -code error "no such channel record"} else {
-   set channel [channels]
-  }
+  if {$channel != ""} {return -code error "no such channel record"} \
+  else {set channel [channels]}
  }; set buffer "" ; set hostmask [string tolower $hostmask]
- foreach chan $channels {
+ foreach chan $channel {
   foreach user [chanlist $chan] {
    if {[string match $hostmask [string tolower $user![getchanhost $user $chan]]]} {
     lappend buffer [list $user $chan]
@@ -480,7 +486,7 @@ if {[catch {islinked -test}]} {
 #
 proc lowest {numbers} {return [lindex [lsort -integer $numbers] 0]}
 
-#
+# v1.0
 proc masktype {hostmask type} {
  set ident_max-length 9
  set host_max-length 63
@@ -510,8 +516,9 @@ proc msg {to text} {puthelp "PRIVMSG $to :$text"}
 #
 proc notice {to text} {puthelp "NOTICE $to :$text"}
 
-#
+# v1.0
 proc replace {text subs} {
+ if {![catch {string map -nocase $subs $text} output]} {return $output}
  for {set i 0} {[lindex $subs $i] != ""} {incr i 2} {
   regsub -all -- [lindex $subs $i] $text [lindex $subs [expr $i+1]] text
  }; return $text
