@@ -1,5 +1,5 @@
 ##
-# More Tools v2.2
+# More Tools v2.3
 #  by MC_8 - Carl M. Gregory <mc8@purehype.net>
 #
 # My SVS Website - http://mc.purehype.net:81/
@@ -14,6 +14,15 @@
 ##
 # History
 ##
+# v2.3 (07.02.02)
+#  MC_8 - - Cleaned up some bs from the 'sendemail' proc.
+#             1) Chagned the _puts proc from sendmail to sendemail.
+#             2) Forgot a '$sid' in a 'puts', therefor it was putting the body as the
+#                header (no blank line deviding them).
+#  MC_8 - - Added the [-wait] option to the 'sendemail' proc, makes it non async and
+#           waits for the email to send.  This is usefull if your using it in CGI.
+#           v1.0 -> v1.1
+#
 # v2.2 (07.01.02)
 #  MC_8 - - Added 'sendemail' procedure.  v1.0
 #
@@ -316,7 +325,7 @@
 #     returns: mIRC compliant reverse
 
 #
-# sendemail <from> <to> <subject> <body> [header list]
+# sendemail <from> <to> <subject> <body> [header list] [-wait]
 #     Sends an async email to <to>.
 #     Information:
 #       <from> should be in this format: [list "Full Name" "from@address.com"]
@@ -326,6 +335,9 @@
 #         As you can see, <to> can contain many addresses.
 #       [header list] should be in this format: [list "header 1" "header 2" ...]
 #         An example header list: [list "Content-Type: text/html"]
+#       [-wait], if you specify '-wait' then the proc will not be async, meaning it
+#         will wait for the email to finish before returning (thought up for for
+#         CGI cases).
 #     returns:  nothing -- this proc is async
 
 #
@@ -606,40 +618,54 @@ proc reverse {{arg {}}} {
 
 
 # sendemail proc
-# v1.0
+# v1.1
 
-set config(smtp_server) smtp.server.com  ;# What's the smtp server's address?
-set config(smtp_port) 25                 ;# What's the smtp port?
+set mc_moretools(smtp_server) smtp.server.com  ;# What's the smtp server's address?
+set mc_moretools(smtp_port) 25                 ;# What's the smtp port?
 
-proc sendemail {from to subject body {headerList ""}} {
-	global config
-	set smtp_server $config(smtp_server)
-	set smtp_port $config(smtp_port)
-	if {[catch {socket $smtp_server $smtp_port} sid]} {
-		error "Cannot create socket: $sid"
+proc sendemail {from to subject body {headerList ""} {wait ""}} {
+	global mc_moretools
+	set smtp_server $mc_moretools(smtp_server)
+	set smtp_port $mc_moretools(smtp_port)
+	if {($wait == "") && ($headerList == "-wait")} {
+		set wait -wait
+		set headerList ""
 	}
+	if {$wait == "-wait"} {
+		if {[catch {socket $smtp_server $smtp_port} sid]} {
+			error "Cannot create socket: $sid"
+		}
+		set mc_moretools(:vwait:$sid) 1
+	} else {set sid [socket -async $smtp_server $smtp_port]}
 	fconfigure $sid -blocking 0 -buffering line
 	set tout [after 60000 "sendemail_fileevent $sid timeout"]
 	fileevent $sid readable [list sendemail_fileevent $sid $tout $from $to $subject \
 		$body $headerList]
+	if {$wait == "-wait"} {
+		vwait mc_moretools(:vwait:$sid)
+	}
 }
 
 proc sendemail_fileevent {sid tout {from ""} {to ""} {subject ""} {body ""} {headerList ""}} {
-	global config
+	global mc_moretools
+	set last_command_a :temp:$sid:last_command
 	if {$tout == "timeout"} {
 		error "sendemail proc, Timeout connecting to SMTP server."
-		catch {unset config($last_command_a)}
+		catch {unset mc_moretools($last_command_a)}
+		catch {unset mc_moretools(:vwait:$sid)}
 		close $sid
 		return
 	}
 	if {[eof $sid]} {
-		catch {unset config($last_command_a)}
+		catch {unset mc_moretools($last_command_a)}
+		catch {unset mc_moretools(:vwait:$sid)}
 		close $sid
 		return
 	}; after cancel $tout
-	set last_command_a :temp:$sid:last_command
-	if {![info exists config($last_command_a)]} {set config($last_command_a) ""}
-	set last_command $config($last_command_a)
+	if {![info exists mc_moretools($last_command_a)]} {
+		set mc_moretools($last_command_a) ""
+	}
+	set last_command $mc_moretools($last_command_a)
 	gets $sid line
 	set rfc [lindex [split $line] 0]
 	set info [join [lrange [split $line] 1 end]]
@@ -647,7 +673,8 @@ proc sendemail_fileevent {sid tout {from ""} {to ""} {subject ""} {body ""} {hea
 		221 {
 			switch -- $last_command {
 				QUIT {
-					catch {unset config($last_command_a)}
+					catch {unset mc_moretools($last_command_a)}
+					catch {unset mc_moretools(:vwait:$sid)}
 					close $sid
 					return
 				}
@@ -656,33 +683,33 @@ proc sendemail_fileevent {sid tout {from ""} {to ""} {subject ""} {body ""} {hea
 		}
 		220 {
 			switch -- $last_command {
-				"" {sendmail_puts $sid "HELO $config(smtp_server)"}
+				"" {sendemail_puts $sid "HELO $mc_moretools(smtp_server)"}
 				default {error "Unknown reply, '$rfc' to '$last_command'.  $info"}
 			}
 		}
 		250 {
 			switch -- $last_command {
-				HELO {sendmail_puts $sid "MAIL From:<[lindex $from 1]>"}
+				HELO {sendemail_puts $sid "MAIL From:<[lindex $from 1]>"}
 				MAIL {
 					set addy [lindex $to 1]
-					set config(:temp:$sid:last_to) 1
-					sendmail_puts $sid "RCPT To:<$addy>"
+					set mc_moretools(:temp:$sid:last_to) 1
+					sendemail_puts $sid "RCPT To:<$addy>"
 				}
 				RCPT {
 					set last_to_a :temp:$sid:last_to
-					set last_to $config($last_to_a)
+					set last_to $mc_moretools($last_to_a)
 					if {$last_to >= [expr [llength $to]-1]} {
-						catch {unset config(:temp:$sid:last_to)}
-						sendmail_puts $sid "DATA "
+						catch {unset mc_moretools(:temp:$sid:last_to)}
+						sendemail_puts $sid "DATA "
 						return
 					}
-					incr config($last_to_a) 2
+					incr mc_moretools($last_to_a) 2
 					incr last_to 2
 					set addy [lindex $to $last_to]
-					sendmail_puts $sid "RCPT To:<$addy>"
+					sendemail_puts $sid "RCPT To:<$addy>"
 				}
 				DATA_d {
-					sendmail_puts $sid "QUIT"
+					sendemail_puts $sid "QUIT"
 				}
 				default {error "Unknown reply, '$rfc' to '$last_command'.  $info"}
 			}
@@ -703,14 +730,14 @@ proc sendemail_fileevent {sid tout {from ""} {to ""} {subject ""} {body ""} {hea
 					set x "Send eMail procedure by MC_8 - Carl M. Gregory -"
 					append x " http://mc.purehype.net/ -"
 					puts $sid "X-Mailer: $x TCL [info tclversion] ([info patchlevel])."
-					puts ""
+					puts $sid ""
 					foreach line [split $body \n] {
 						regsub -- ^\\. $line .. line
 						puts $sid $line
 					}
 					puts $sid .
 					flush $sid
-					set config($last_command_a) DATA_d
+					set mc_moretools($last_command_a) DATA_d
 				}
 				default {error "Unknown reply, '$rfc' to '$last_command'.  $info"}
 			}
@@ -719,10 +746,10 @@ proc sendemail_fileevent {sid tout {from ""} {to ""} {subject ""} {body ""} {hea
 	}
 }
 
-proc sendmail_puts {sid command} {
-	global config
+proc sendemail_puts {sid command} {
+	global mc_moretools
 	puts $sid $command
-	set config(:temp:$sid:last_command) [lindex [split $command] 0]
+	set mc_moretools(:temp:$sid:last_command) [lindex [split $command] 0]
 	flush $sid
 }
 # ^
@@ -814,6 +841,6 @@ if {1} {
 	putlog "More Tools:  Partyline action-fix applied."
 }
 
-set moretools_version v2.2
-set moretools "020200"
+set moretools_version v2.3
+set moretools "020300"
 putlog "More Tools $moretools_version by MC_8 loaded."
