@@ -1,5 +1,5 @@
 ##
-# More Tools v2.1
+# More Tools v2.1.1
 #  by MC_8 - Carl M. Gregory <mc8@purehype.net>
 #
 # My SVS Website - http://mc.purehype.net:81/
@@ -14,62 +14,80 @@
 ##
 # History
 ##
+# v2.1.1 (06.18.02)
+#  MC_8 -        - Fixed conversion of string->list format for channel veriable
+#                  within the gethost proc.  v1.0 -> v1.1
+#  MC_8 -        - Fixed conversion of string->list format for channel veriable
+#                  within the getchanhost proc.  old -> v2.0
+#  MC_8 -        - Fixed conversion of string->list format for channel veriable
+#                  within the findnick proc.  v1.0 -> v1.1
+#  MC_8 -        - Fixed 'can't read "string": no such variable' within findip
+#                  proc.  v1.0 -> v1.1
+#  MC_8 -        - Fixed string->list format error in ctcp proc.  v1.1 -> v1.2
+#  MC_8 - Jürgen - Upgraded masktype proc, was giving error 'couldn't set
+#                  variable "temp"'.  v1.2 -> v1.3
+#
 # v2.1 (04.24.02)
-#  MC_8 - Added 'dccchat' and 'normal' command.
-#  MC_8 - Upgraded 'chanflag' proc, defaults to 0 rather than the other way
-#         around.  v2.0 -> v2.1
-#  MC_8 - Upgraded 'masktype' proc, fixed some minor errors.
-#          o If ident@host == test@me@192.168.0.1, it would set ident to 'test'
-#            and host to 'me@192.168.0.1'.
-#          o Types *1,3,6,8 is support to remove the ident's first ~.  It was
-#            removing all continues (from left) ~'s.
-#          o A little more efficient, by caching some commands.
-#         v1.1 -> v1.2
-#  MC_8 - Added the 'normal' character code to 'strip:all' proc.  v1.0 -> v1.1
-#  MC_8 - Added the 'strip:normal' proc.  -> v1.0
+#  MC_8 - - Added 'dccchat' and 'normal' command.
+#  MC_8 - - Upgraded 'chanflag' proc, defaults to 0 rather than the other way
+#           around.  v2.0 -> v2.1
+#  MC_8 - - Upgraded 'masktype' proc, fixed some minor errors.
+#             o If ident@host == test@me@192.168.0.1, it would set ident to
+#               'test' and host to 'me@192.168.0.1'.
+#             o Types *1,3,6,8 is support to remove the ident's first ~.  It was
+#               removing all continues (from left) ~'s.
+#             o A little more efficient, by caching some commands.
+#           v1.1 -> v1.2
+#  MC_8 - - Added the 'normal' character code to 'strip:all' proc.  v1.0 -> v1.1
+#  MC_8 - - Added the 'strip:normal' proc.  -> v1.0
 #
 # v2.0.2 (03.17.02)
-#  MC_8 - Fixed error in masktype proc; if type is 10-19 and the host is an ip
-#         and it has a 255 in any of the 4 atoms- it would be treated as a host
-#         rather than an ip.  v1.0 -> v1.1
-#  MC_8 - Fixed listing error in 'ctcp' proc. v1.0 -> v1.1
-#  MC_8 - Re coded the action fix filter proc's.
-#  MC_8 - Upgraded chanflag proc to v2.0, faster.
-#  MC_8 - Upgraded 'chanint' proc to v2.0, faster.
-#  MC_8 - Fixed 'couldn't compile regular expression pattern' problem with
-#         replace proc.
-#  MC_8 - Fixed set x bug in color proc.
+#  MC_8 - - Fixed error in masktype proc; if type is 10-19 and the host is an ip
+#           and it has a 255 in any of the 4 atoms- it would be treated as a
+#           host rather than an ip.  v1.0 -> v1.1
+#  MC_8 - - Fixed listing error in 'ctcp' proc. v1.0 -> v1.1
+#  MC_8 - - Re coded the action fix filter proc's.
+#  MC_8 - - Upgraded chanflag proc to v2.0, faster.
+#  MC_8 - - Upgraded 'chanint' proc to v2.0, faster.
+#  MC_8 - - Fixed 'couldn't compile regular expression pattern' problem with
+#           replace proc.
+#  MC_8 - - Fixed set x bug in color proc.
 #
 # v2.0.1 (11.11.01)
-#  MC_8 - Fixed 'missing close-brace' startup crash error for the 'findnick' proc.
-#  MC_8 - 'replace' will not try and utilize string map, if error (older version of
-#         tcl don't support it), it will go with the home grown procedure.
+#  MC_8 - - Fixed 'missing close-brace' startup crash error for the 'findnick'
+#           proc.
+#  MC_8 - - 'replace' will not try and utilize string map, if error (older
+#           version of tcl don't support it), it will go with the home grown
+#           procedure.
 #
 # v2.0 (11.05.01)
-#  MC_8 - Rewrote all proc's.  If you used this script previously, please
-#         re-review the proc's you use for some have changed it's output
-#         format... and some have been removed (other proc's take there place).
+#  MC_8 - - Rewrote all proc's.  If you used this script previously, please
+#           re-review the proc's you use for some have changed it's output
+#           format... and some have been removed (other proc's take there
+#           place).
 #
 # v1.3.1 (08.31.01)
-#  MC_8 - Fixed special character handling of botnet action fix.
+#  MC_8 - - Fixed special character handling of botnet action fix.
 #
 # v1.3 (02.01.01)
-#  MC_8 - Fixed casing problem with findchanuser procedure.
-#  MC_8 - Added 'chanflagison'.
+#  MC_8 - - Fixed casing problem with findchanuser procedure.
+#  MC_8 - - Added 'chanflagison'.
 #
 # v1.2 (08.14.00)
-#  MC_8    - Found a little problem with 'maskhost' proc.  If you specified
-#            ident@host it would return !@.
-#  FireEgl - Added which proc.
-#  MC_8    - Added 'gethost' proc.
-#  MC_8    - Changed 'dnslookup' to resolve, 1.5.3 and up carry there own dnslookup #            proc.
+#  MC_8    - - Found a little problem with 'maskhost' proc.  If you specified
+#              ident@host it would return !@.
+#  FireEgl - - Added which proc.
+#  MC_8    - - Added 'gethost' proc.
+#  MC_8    - - Changed 'dnslookup' to resolve, 1.5.3 and up carry there own
+#              dnslookup proc.
 #
 # v1.1.9 (04.05.00)
-#  MC_8 - Fixed maskhost a bit, the server was doing it's own strange masking to #         long ident's and hosts.  Only effects things above the numbers of
-#         <nick>!9@36.  Undernet does the masking to it ok, but EfNet just fucks
-#         it to hell, making something like bla.bla.com into *bla.bl to get it
-#         to fit (cutting off the wrong side). ANYHOW, it is fixed.
-#  MC_8 - Fixed special character return bug proc 'findchanuser'.
+#  MC_8 - - Fixed maskhost a bit, the server was doing it's own strange masking
+#           to long ident's and hosts.  Only effects things above the numbers of
+#           <nick>!9@36.  Undernet does the masking to it ok, but EfNet just
+#           fucks it to hell, making something like bla.bla.com into *bla.bl to
+#           get it to fit (cutting off the wrong side). ANYHOW, it is fixed.
+#  MC_8 - - Fixed special character return bug proc 'findchanuser'.
 #
 # v1.1.8 (11-23-99) -not published yet
 #  MC_8 - ZARPO - Eggdrop1.4.0+ has removed it's own internal time proc and let
@@ -78,11 +96,13 @@
 #                 the way it use to be when eggdrop1.3.28- took control.  And
 #                 no, will not conflict on higher/ lower bot versions!
 #  MC_8 -       - Added on source putlog responses on everything the bot catches
-#                 and re-proc's.  (I like to know what the scripts are changing.)
+#                 and re-proc's.  (I like to know what the scripts are
+#                 changing.)
 #  MC_8 -       - Added the latest action.fix tcl code.
 #
 # v1.1.7 (10-30-99)
-#  MC_8 - VaultX - Eggdrop1.3.29+RC2 for some reason did not have the date proc, #                  on source now tests to see if the date proc is there and
+#  MC_8 - VaultX - Eggdrop1.3.29+RC2 for some reason did not have the date proc,
+#                  on source now tests to see if the date proc is there and
 #                  doesn't contain errors.  If needed moretools re-wrights the
 #                  proc date.
 #  MC_8 -        - Made realtime non reliant on alltools.
@@ -94,39 +114,41 @@
 #               error).
 #
 # v1.1.5 (10-12-99)
-#  MC_8 - Added 'finduserchan'.
-#  MC_8 - Modified lremove to work better.
-#  MC_8 - Fixed returns of []'d characters not to return as {[]'d}.
-#  MC_8 - Adjusted replace and lremove.
+#  MC_8 - - Added 'finduserchan'.
+#  MC_8 - - Modified lremove to work better.
+#  MC_8 - - Fixed returns of []'d characters not to return as {[]'d}.
+#  MC_8 - - Adjusted replace and lremove.
 #
 # v1.1.4 (10-09-99)
-#  MC_8 - Added 'findchanuser', 'masktype' and 'replace'.
+#  MC_8 - - Added 'findchanuser', 'masktype' and 'replace'.
 #
 # v1.1.3 (09-28-99)
-#  MC_8 - Added 'str'.
-#  MC_8 - Cleaned up the definition section for the proc's.
-#  MC_8 - Fixed a typo in the 'ctcp' proc.
+#  MC_8 - - Added 'str'.
+#  MC_8 - - Cleaned up the definition section for the proc's.
+#  MC_8 - - Fixed a typo in the 'ctcp' proc.
 #
 # v1.1.2 (08-08-99)
-#  MC_8 - Fixed some bugs on the 'findip' proc.
+#  MC_8 - - Fixed some bugs on the 'findip' proc.
 #
 # v1.1.1
-#  MC_8 - Added 'notice', 'msg', 'ctcp', 'bold', 'uline', 'reverse' and 'color'.
+#  MC_8 - - Added 'notice', 'msg', 'ctcp', 'bold', 'uline', 'reverse' and
+#           'color'.
 #
 # v1.1.0
-#  MC_8 - Added 'isparty' and 'islink'.
+#  MC_8 - - Added 'isparty' and 'islink'.
 #
 # v1.0.1
-#  MC_8 - Changed return output for 'dnslookup'.
+#  MC_8 - - Changed return output for 'dnslookup'.
 #
 # v1.0
-#  MC_8 - Initial Release
+#  MC_8 - - Initial Release.
 ##
 
 ##
 # Procedures:
 ##
-# Scriptures, to test if this script is loaded variable $moretools will be set to # moretools current version number.
+# Scriptures, to test if this script is loaded variable $moretools will be set
+# to moretools current version number.
 # <major version><minor version><bug fix level> ((010000) <- version 1.0.0)
 
 #
@@ -138,7 +160,7 @@
 # biggest <numbers>
 #     returns: the number of greatest value
 
-#v1.0
+#
 # bold [text]
 #     Puts the bold character around [text] (optional). If
 #     [text] isn't specified, a lone bold character will be
@@ -179,7 +201,7 @@
 #     append the clock seconds to it.
 #     returns: nothing
 
-# v1.0
+#
 # dccchat <nick>
 #     Initiates a DCC Chat with <nick>.
 #     returns: 0 = No telnet ports setup.
@@ -225,6 +247,7 @@
 
 #
 # lowest <numbers>
+#     <numbers> are to be in list format.
 #     returns: the number of smallest value
 
 #
@@ -242,11 +265,11 @@
 #      7 - nick!*@host.domain
 #      8 - nick!*user@*.domain
 #      9 - nick!*@*.domain
-#     You can also specify a type of 10 to 19 which correspond to masks
-#     0 to 9.  But if the host.domain is a;
-#       hostname = Instead of using a * wildcard to replace portions of
-#                  the host.domain, it replaces the numbers in the
-#                  host.domain with a '?' (question mark) wildcard
+#     You can also specify a type of 10 to 19 which correspond to masks 0 to 9.
+#     But if the host.domain is a;
+#       hostname = Instead of using a * wildcard to replace portions of the
+#                  host.domain, it replaces the numbers in the host.domain with
+#                  a '?' (question mark) wildcard.
 #       ip       = It will mask as normal, with no '?' (question mark)
 #                  replacments as does hostname.
 #     returns: mask'd host
@@ -256,7 +279,7 @@
 #     Sends a message.
 #     return: nothing
 
-#v1.0
+#
 # normal [text]
 #     Puts the normal mIRC compliant character around [text]. If [text] is not
 #     specified, a loned bold character will be returned.
@@ -341,6 +364,11 @@
 
 #### Procedure coding
 
+# Inital unset, will be set at end.  So basically one can
+#   if {[info exists mretools]} { ;#then moretools loaded without error
+catch {unset moretools_version}
+catch {unset moretools}
+
 # v1.0
 proc action {to text} {puthelp "PRIVMSG $to :\001ACTION $text\001"}
 
@@ -348,240 +376,305 @@ proc action {to text} {puthelp "PRIVMSG $to :\001ACTION $text\001"}
 proc biggest {numbers} {return [lindex [lsort -integer $numbers] end]}
 
 # v1.0
-proc bold {{arg ""}} {if {$arg != ""} {append arg \002};return \002$arg}
+proc bold {{arg ""}} {
+	if {$arg != ""} {append arg \002}
+	return \002$arg
+}
 
 # v2.1
 proc chanflag {channel flag} {
- if {[lsearch -exact [string tolower [channel info $channel]] +[string tolower $flag]] >= "0"} {return 1}
- return 0
+	set temp(1) [string tolower [channel info $channel]]
+	if {[lsearch -exact $temp(1) +[string tolower $flag]] >= "0"} {return 1}
+	return 0
 }
 
 # v2.0
 proc chanint {channel int} {
- set cache(chaninfo) [string tolower [channel info $channel]]
- regsub -all -- {([\\\{\}\[\]\"])} [string tolower $int] {\\\1} int
- if {[set temp(i) [lsearch -glob $cache(chaninfo) "$int *"]] == "-1"} {return -1}
- return [lindex [split [lindex $cache(chaninfo) $temp(i)] " "] 1]
+	set cache(chaninfo) [string tolower [channel info $channel]]
+	regsub -all -- {([\\\{\}\[\]\"])} [string tolower $int] {\\\1} int
+	if {[set temp(i) [lsearch -glob $cache(chaninfo) "$int *"]] == "-1"} {
+		return -1
+	}; return [lindex [split [lindex $cache(chaninfo) $temp(i)] " "] 1]
 }
 
 # v1.1
-proc color {{num {}} {text {}}} {
- if {$text == ""} {set x $num} else {
-  if {$num == ""} {
-   return -code error "wrong # args: should be \"color [forground[,background] [text]]\""
-  } elseif {![regexp {^([0-9][0-9]?(,[0-9][0-9]?)?)?$} $num]} {
-   return -code error "couldn't formulate colored string: invalid color number format, should be ff\[,bb\]"
-  }; set x $num$text\003
- }; return \003$x
+proc color {{num ""} {text ""}} {
+	if {$text == ""} {set x $num} else {
+		if {$num == ""} {
+			set temp(1) {color [forground[,background] [text]]}
+			return -code error "wrong # args: should be \"$temp(1)\""
+		} elseif {![regexp {^([0-9][0-9]?(,[0-9][0-9]?)?)?$} $num]} {
+			set temp(1) {invalid color number format, should be ff[,bb]}
+			return -code error "couldn't formulate colored string: $temp(1)"
+		}; set x $num$text\003
+	}; return \003$x
 }
 
-# v1.1
+# v1.2
 proc ctcp {to arg} {
- set arg "[string toupper [lindex [split $arg] 0]] [join [lrange [split $arg] 1 end]]"
- if {([lindex $arg 0] == "PING") && ([lindex $arg 1] == "")} {set arg "PING [clock seconds]"}
- puthelp "PRIVMSG $to :\001$arg\001"
+	set temp(key) [string toupper [lindex [split $arg] 0]]
+	set temp(txt) [join [lrange [split $arg] 1 end]]
+	if {($temp(key) == "PING") && ($temp(txt) == "")} {
+		set temp(txt) [clock seconds]
+	}; puthelp "PRIVMSG $to :\001$temp(key) $temp(txt)\001"
 }
 
 # v1.0
 proc dccchat {nick} {
- foreach d [dcclist TELNET] {
-  set hand [lindex $d 1]
-  if {($hand != "(users)") && ($hand != "(telnet)")} {continue}
-  puthelp "PRIVMSG $nick :\001DCC CHAT chat [myip] [lindex [lindex $d 4] 1]\001"
-  return 1
- }; return 0
+	foreach item [dcclist TELNET] {
+		set hand [lindex $item 1]
+		if {($hand != "(users)") && ($hand != "(telnet)")} {continue}
+		set temp(1) [lindex [lindex $item 4] 1]
+		puthelp "PRIVMSG $nick :\001DCC CHAT chat [myip] $temp(1)\001"
+		return 1
+	}; return 0
 }
 
 # v2.0
 proc filt {text} {
-	regsub -all -- {([\\\{\}\[\]\"])} $text {\\\1} text; return $text
+	regsub -all -- {([\\\{\}\[\]\"])} $text {\\\1} text
+	return $text
 }
 
-# v1.0
+# v1.1
 proc findip {arg} {
- set ips ""
- while {[regexp -- {([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)} $arg temp a b c d]} {
-  if {$a > 0 && $a < 256 && $b < 256 && $c < 256 && $d < 256} {lappend ips $a.$b.$c.$d}
-  set string [string range $string [expr [string first $a.$b.$c.$d $string]+1] end]
- }; return $ips
+	set ips ""
+	set temp(regex) {([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)}
+	append temp(regex) {\.([0-9][0-9]?[0-9]?)\.([0-9][0-9]?[0-9]?)}
+	while {[regexp -- $temp(regex) $arg dummy a b c d]} {
+  	if {$a > 0 && $a < 256 && $b < 256 && $c < 256 && $d < 256} {
+			lappend ips $a.$b.$c.$d
+		}
+  	set arg [string range $arg [expr [string first $a.$b.$c.$d $arg]+1] end]
+ 	}; return $ips
 }
 
 # v1.0
 proc findhand {hostmask} {
- set list ""
- foreach user [whom *] {
-  set uhost [format %s!%s [lindex $user 0] [lindex $user 2]]
-  if {![string match [string tolower $hostmask] $uhost]} {continue}
-  lappend list [list $uhost [lindex $user 1]]
- }; return $list
+	set list ""
+	foreach user [whom *] {
+		set uhost "[lindex $user 0]![lindex $user 2]"
+		if {![string match [string tolower $hostmask] $uhost]} {continue}
+		lappend list [list $uhost [lindex $user 1]]
+	}; return $list
 }
 
-# v1.0
+# v1.1
 proc findnick {hostmask {channel ""}} {
- if {![validchan $channel]} {
-  if {$channel != ""} {return -code error "no such channel record"} \
-  else {set channel [channels]}
- }; set buffer "" ; set hostmask [string tolower $hostmask]
- foreach chan $channel {
-  foreach user [chanlist $chan] {
-   if {[string match $hostmask [string tolower $user![getchanhost $user $chan]]]} {
-    lappend buffer [list $user $chan]
-   }
-  }
- }; return $buffer
+	if {![validchan $channel]} {
+		if {$channel != ""} {return -code error "no such channel record"} \
+		else {set channel [channels]}
+	} else {set channel [list $channel]}
+	set return ""
+	set hostmask [string tolower $hostmask]
+	foreach chan $channel {
+		foreach user [chanlist $chan] {
+			set temp(1) [string tolower $user![getchanhost $user $chan]]
+			if {[string match $hostmask $temp(1)]} {
+				lappend return [list $user $chan]
+			}
+		}
+	}; return $return
 }
 
 # Pre 1.4.2 bots do not support getchanhost with as channel optional.
 # This is a simple fix to make channel optional.
+# v2.0
 if {[catch {getchanhost -test}]} {
- if {[info commands mc:fix:v1:getchanhost] == ""} {rename getchanhost mc:fix:v1:getchanhost}
- proc getchanhost {nick {channel ""}} {
-  if {![validchan $channel]} {
-   if {$channel != ""} {return -code error "no such channel record"} \
-   else {set channel [channels]}
-  }
-  foreach chan $channel {if {[onchan $nick $chan]} {return [mc:fix:v1:getchanhost $nick $chan]}}
-  return ""
- }; putlog "More Tools:  Old TCL command 'getchanhost' found, fixing."
+	if {[info commands mc:fix:v1:getchanhost] == ""} {
+		rename getchanhost mc:fix:v1:getchanhost
+	}
+	proc getchanhost {nick {channel ""}} {
+		if {![validchan $channel]} {
+			if {$channel != ""} {return -code error "no such channel record"} \
+			else {set channel [channels]}
+		} else {set channel [list $channel]}
+		foreach chan $channel {
+			if {[onchan $nick $chan]} {
+				return [mc:fix:v1:getchanhost $nick $chan]
+			}
+		}; return ""
+	}; putlog "More Tools:  Old eggdrop+TCL command 'getchanhost' found, fixing."
 }
 
-# v1.0
+# v1.1
 proc gethost {nick {channel ""}} {
- if {![catch {set return [getchanhost $nick]}]} {return $return}
- if {![validchan $channel]} {
-  if {$channel != ""} {return -code error "no such channel record"} \
-  else {set channel [channels]}
- }
- foreach chan $channel {if {[onchan $nick $chan]} {return [getchanhost $nick $chan]}}
- return ""
+	if {![catch {set return [getchanhost $nick]}]} {return $return}
+	if {![validchan $channel]} {
+		if {$channel != ""} {return -code error "no such channel record"} \
+		else {set channel [channels]}
+	} else {set channel [list $channel]}
+	foreach chan $channel {
+		if {[onchan $nick $chan]} {
+			return [getchanhost $nick $chan]
+		}
+	}; return ""
 }
 
 # Pre 1.4.2 bots do not support the islinked tcl command.  This will add it
 # if not avilable.
+# v1.0
 if {[catch {islinked -test}]} {
- proc islinked {bot} {
-  if {[lsearch -exact [string tolower [bots]] [string tolower $bot]] == "-1"} {return 0}
-  return 1
- }; putlog "More Tools:  TCL command 'islinked' not found, fixing."
+	proc islinked {bot} {
+		set temp(1) [string tolower [bots]]
+		if {[lsearch -exact $temp(1) [string tolower $bot]] == "-1"} {return 0}
+		return 1
+	}; putlog "More Tools:  TCL command 'islinked' not found, fixing."
 }
 
 # v1.0
 proc lowest {numbers} {return [lindex [lsort -integer $numbers] 0]}
 
-# v1.2
+# v1.3
 proc masktype {nuhost type} {
- set ident_max-length 9
- set host_max-length 63
- scan $nuhost {%[^!]!%s} nick uhost
- set temp(split_uhost) [split $uhost @]
- set ident [join [lrange $temp(split_uhost) 0 [expr [llength $temp(split_uhost)]-2]] @]
- set host [lindex $temp(split_uhost) end]
- set maskhost 1
- if {[regexp -- {^1[0-9]$} $type]} {
-  set temp(w) {([0-9][0-9]?[0-9]?)}
-  set temp(x) "^$temp(w)\\.$temp(w)\\.$temp(w)\\.$temp(w)\$"
-  if {!(([regexp -- $temp(x) $host temp a b c d]) &&
-       ($a > 0 && $a <= 255 && $b <= 255 && $c <= 255 && $d <= 255))} {
-   regsub -all -- {[0-9]} $host ? host
-   set maskhost 0
-  }; set type [string index $type 1]
- }
- if {[regexp -- {^[0-4]$} $type]} {set nick "*"}
- if {[regexp -- {^[2479]$} $type]} {set ident "*"}
- if {[regexp -- {^[1368]$} $type]} {regsub -- {^~?(.*)$} $ident *\\1 ident}
- if {[regexp -- {^[3489]$} $type]} {
-  if {$maskhost} {set host [lindex [split [maskhost $host] @] end]}
- }
- if {[set cache(x) [string length $ident]] > ${ident_max-length}} {
-  set ident "*[string range $ident [expr $cache(x)-${ident_max-length}] end]"
- }
- if {[set cache(x) [string length $host]] > ${host_max-length}} {
-  set host "*[string range $host [expr $cache(x)-${host_max-length}] end]"
- }; return [format "%s!%s@%s" $nick $ident $host]
+	set ident_max-length 9
+	set host_max-length 63
+	scan $nuhost {%[^!]!%s} nick uhost
+	set temp(split_uhost) [split $uhost @]
+	set temp(1) [expr [llength $temp(split_uhost)]-2]
+	set ident [join [lrange $temp(split_uhost) 0 $temp(1)] @]
+	set host [lindex $temp(split_uhost) end]
+	set maskhost 1
+	if {[regexp -- {^1[0-9]$} $type]} {
+		set temp(w) {([0-9][0-9]?[0-9]?)}
+		set temp(x) "^$temp(w)\\.$temp(w)\\.$temp(w)\\.$temp(w)\$"
+		if {!(([regexp -- $temp(x) $host temp(1) a b c d]) &&
+		     ($a > 0 && $a <= 255 && $b <= 255 && $c <= 255 && $d <= 255))} {
+			regsub -all -- {[0-9]} $host ? host
+			set maskhost 0
+		}
+		set type [string index $type 1]
+	}
+	if {[regexp -- {^[0-4]$} $type]} {set nick "*"}
+	if {[regexp -- {^[2479]$} $type]} {set ident "*"}
+	if {[regexp -- {^[1368]$} $type]} {regsub -- {^~?(.*)$} $ident *\\1 ident}
+	if {[regexp -- {^[3489]$} $type]} {
+		if {$maskhost} {set host [lindex [split [maskhost $host] @] end]}
+	}
+	if {[set cache(x) [string length $ident]] > ${ident_max-length}} {
+		set ident "*[string range $ident [expr $cache(x)-${ident_max-length}] end]"
+	}
+	if {[set cache(x) [string length $host]] > ${host_max-length}} {
+		set host "*[string range $host [expr $cache(x)-${host_max-length}] end]"
+	}
+	return [format "%s!%s@%s" $nick $ident $host]
 }
 
 # v1.0
 proc msg {to text} {puthelp "PRIVMSG $to :$text"}
 
 # v1.0
-proc normal {{arg ""}} {if {$arg != ""} {append arg \017};return \017$arg}
+proc normal {{arg ""}} {
+	if {$arg != ""} {append arg \017}
+	return \017$arg
+}
 
 # v1.0
 proc notice {to text} {puthelp "NOTICE $to :$text"}
 
 # v1.1
 proc replace {text subs} {
- if {![catch {string map -nocase $subs $text} output]} {return $output}
- for {set i 0} {[lindex $subs $i] != ""} {incr i 2} {
-  regsub -all -- {([\\\*\+\?\{\}\,\(\)\:\[\]\.\^\$\=\!\|])} [lindex $subs $i] {\\\1} temp(temp)
-  regsub -all -- $temp(temp) $text [lindex $subs [expr $i+1]] text
- }; return $text
+	if {![catch {string map -nocase $subs $text} output]} {return $output}
+	for {set i 0} {[lindex $subs $i] != ""} {incr i 2} {
+		set temp(re_syntax) {([\\\*\+\?\{\}\,\(\)\:\[\]\.\^\$\=\!\|])}
+		regsub -all -- $temp(re_syntax) [lindex $subs $i] {\\\1} temp(temp)
+		regsub -all -- $temp(temp) $text [lindex $subs [expr $i+1]] text
+	}; return $text
 }
 
 # v1.0
-proc reverse {{arg {}}} {if {$arg != ""} {append arg \026};return \026$arg}
+proc reverse {{arg {}}} {
+	if {$arg != ""} {append arg \026}
+	return \026$arg
+}
 
 # v1.0
 proc str {text times} {
- if {![catch {string repeat $text $times} output]} {return $output}
- for {set i 1; set return ""} {($i <= $times) && ($times > 0)} {incr i} {append return $text}
- return $return
+	if {![catch {string repeat $text $times} output]} {return $output}
+	for {set i 1; set return ""} {($i <= $times) && ($times > 0)} {incr i} {
+		append return $text
+	}; return $return
 }
 
 # v1.1
 proc strip:all {text} {
- regsub -all -- {\002} $text "" text ;#bold
- regsub -all -- {\003([0-9][0-9]?(,[0-9][0-9]?)?)?} $text "" text ;#color
- regsub -all -- {\017} $text "" text ;#normal
- regsub -all -- {\026} $text "" text ;#reverse
- regsub -all -- {\037} $text "" text ;#underline
- return $text
+	regsub -all -- {\002} $text "" text ;#bold
+	regsub -all -- {\003([0-9][0-9]?(,[0-9][0-9]?)?)?} $text "" text ;#color
+	regsub -all -- {\017} $text "" text ;#normal
+	regsub -all -- {\026} $text "" text ;#reverse
+	regsub -all -- {\037} $text "" text ;#underline
+	return $text
 }
 
 # v1.0
-proc strip:bold {text} {regsub -all -- {\002} $text "" text; return $text}
+proc strip:bold {text} {
+	regsub -all -- {\002} $text "" text
+	return $text
+}
 
 # v1.0
 proc strip:color {text} {
- regsub -all -- {\003([0-9][0-9]?(,[0-9][0-9]?)?)?} $text "" text
- return $text
+	regsub -all -- {\003([0-9][0-9]?(,[0-9][0-9]?)?)?} $text "" text
+	return $text
 }
 
 # v1.0
-proc strip:normal {text} {regsub -all -- {\017} $text "" text; return $text}
+proc strip:normal {text} {
+	regsub -all -- {\017} $text "" text
+	return $text
+}
 
 # v1.0
-proc strip:reverse {text} {regsub -all -- {\026} $text "" text; return $text}
+proc strip:reverse {text} {
+	regsub -all -- {\026} $text "" text
+	return $text
+}
 
 # v1.0
-proc strip:uline {text} {regsub -all -- {\037} $text "" text; return $text}
+proc strip:uline {text} {
+	regsub -all -- {\037} $text "" text
+	return $text
+}
 
 # v1.0
-proc uline {{arg {}}} {if {$arg != ""} {append arg \037};return \037$arg}
+proc uline {{arg {}}} {
+	if {$arg != ""} {append arg \037}
+	return \037$arg
+}
 
 # v1.0
 proc which {exec} {
- if {![catch {exec which $exec} output]} {return $output}
- global env
- if {[info exists env(OS)] && [string match *windows* [string tolower $env(OS)]]} {set temp ";"} else {set temp ":"}
- foreach path [split $env(PATH) $temp] {if {[file executable "$path/$exec"]} {return "$path/$exec"}}; return ""
+	if {![catch {exec which $exec} output]} {return $output}
+	global env
+	if {[info exists env(OS)] &&
+	    [string match *windows* [string tolower $env(OS)]]} {
+		set temp ";"
+	} else {set temp ":"}
+	foreach path [split $env(PATH) $temp] {
+		if {[file executable "$path/$exec"]} {
+			return "$path/$exec"
+		}
+	}; return ""
 }
 
-# Yea yea, if {1}, no real meaning... just trying to keep it grouped together for easy reading.
-# This does the action fixes for dcc chat and telnet partyline communications.
+# Yea yea, if {1}, no real meaning... just trying to keep it grouped together
+# for easy reading.  This does the action fixes for dcc chat and telnet
+# partyline communications.
 if {1} {
- bind filt - "\001ACTION *\001" filt_act
- proc filt_act {idx text} {
-  set temp [join [lrange [split $text] 1 end]]
-  regexp -- "^(.*)\001?\$" $temp dummy temp
-  return ".me $temp"
- }
- bind filt - "/me *" filt_telnet_act
- bind filt - "/action *" filt_telnet_act
- proc filt_telnet_act {idx text} {return ".me [join [lrange [split $text " "] 1 end] " "]"}
- putlog "More Tools:  Partyline action-fix applied."
+	bind filt - "\001ACTION *\001" filt_act
+	proc filt_act {idx text} {
+		set temp [join [lrange [split $text] 1 end]]
+		regexp -- "^(.*)\001?\$" $temp dummy temp
+		return ".me $temp"
+	}
+	bind filt - "/me *" filt_telnet_act
+	bind filt - "/action *" filt_telnet_act
+	proc filt_telnet_act {idx text} {
+		return ".me [join [lrange [split $text " "] 1 end] " "]"
+	}
+	putlog "More Tools:  Partyline action-fix applied."
 }
 
-set moretools_version v2.1
-set moretools "020100"
+set moretools_version v2.1.1
+set moretools "020101"
 putlog "More Tools $moretools_version by MC_8 loaded."
